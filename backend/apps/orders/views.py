@@ -12,7 +12,7 @@ from .serializers import OrderReadSerializer
 from apps.cart.models import Cart
 from apps.products.models import Product
 
-class OrderListView(APIView):
+class OrderListView(APIView): 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

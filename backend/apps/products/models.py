@@ -19,7 +19,7 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
-    discount = models.PositiveIntegerField(default=0)  # percentage
+    discount = models.PositiveIntegerField(default=0) 
     shipping_days = models.CharField(max_length=50, blank=True)
     return_policy = models.CharField(max_length=100, blank=True)
 

@@ -58,7 +58,7 @@ class UserListView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        # Allow admin to manually create users if needed, or register
+
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
