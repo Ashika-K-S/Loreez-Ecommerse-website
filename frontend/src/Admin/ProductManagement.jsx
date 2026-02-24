@@ -20,8 +20,9 @@ const ProductManagement = () => {
 
   const fetchData = async () => {
     try {
-      const prodRes = await api.get("products/");
-      setProducts(prodRes.data);
+      const prodRes = await api.get("products/?no_pagination=true");
+      const productsData = prodRes.data.results || (Array.isArray(prodRes.data) ? prodRes.data : []);
+      setProducts(productsData);
       const catRes = await api.get("categories/");
       setCategories(catRes.data);
     } catch (err) {
@@ -230,43 +231,52 @@ const ProductManagement = () => {
         </div>
       )}
 
-      {/* Product Table */}
-      <div className="bg-white rounded-xl shadow p-4">
-        <h2 className="text-xl font-bold mb-4 text-gray-800">Existing Products</h2>
-        <table className="min-w-full text-left border-collapse">
+      <div className="bg-white rounded-xl shadow overflow-x-auto">
+        <div className="p-4 border-b">
+          <h2 className="text-xl font-bold text-gray-800">Existing Products</h2>
+        </div>
+        <table className="w-full text-left border-collapse">
           <thead className="bg-purple-50">
             <tr>
-              <th className="py-2 px-3 border-b text-purple-700">Name</th>
-              <th className="py-2 px-3 border-b text-purple-700">Category</th>
-              <th className="py-2 px-3 border-b text-purple-700">Price</th>
-              <th className="py-2 px-3 border-b text-purple-700">Stock</th>
-              <th className="py-2 px-3 border-b text-purple-700">Image</th>
-              <th className="py-2 px-3 border-b text-purple-700">Actions</th>
+              <th className="py-3 px-4 border-b text-purple-700 font-semibold">Name</th>
+              <th className="py-3 px-4 border-b text-purple-700 font-semibold text-center">Category</th>
+              <th className="py-3 px-4 border-b text-purple-700 font-semibold text-center">Price</th>
+              <th className="py-3 px-4 border-b text-purple-700 font-semibold text-center">Stock</th>
+              <th className="py-3 px-4 border-b text-purple-700 font-semibold text-center">Image</th>
+              <th className="py-3 px-4 border-b text-purple-700 font-semibold text-center">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-100">
             {products.map((p) => (
-              <tr key={p.id} className="hover:bg-purple-50 transition">
-                <td className="py-2 px-3 border-b">{p.name}</td>
-                <td className="py-2 px-3 border-b">{p.category_name}</td>
-                <td className="py-2 px-3 border-b">₹{Number(p.price).toLocaleString()}</td>
-                <td className="py-2 px-3 border-b">{p.stock}</td>
-                <td className="py-2 px-3 border-b">
-                  {p.image && <img src={p.image} alt={p.name} className="w-12 h-12 rounded object-cover" />}
+              <tr key={p.id} className="hover:bg-purple-50 transition-colors">
+                <td className="py-3 px-4 text-gray-700 font-medium">{p.name}</td>
+                <td className="py-3 px-4 text-center text-gray-600">{p.category_name}</td>
+                <td className="py-3 px-4 text-center text-gray-900 font-semibold">₹{Number(p.price).toLocaleString()}</td>
+                <td className="py-3 px-4 text-center text-gray-600">{p.stock}</td>
+                <td className="py-3 px-4">
+                  <div className="flex justify-center">
+                    {p.image ? (
+                      <img src={p.image} alt={p.name} className="w-10 h-10 rounded-lg object-cover shadow-sm border" />
+                    ) : (
+                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-[10px]">No Img</div>
+                    )}
+                  </div>
                 </td>
-                <td className="py-2 px-3 border-b flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => handleEdit(p)}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded text-xs"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(p.id)}
-                    className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
-                  >
-                    Delete
-                  </button>
+                <td className="py-3 px-4">
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => handleEdit(p)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(p.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

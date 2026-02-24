@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import User
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -48,3 +50,34 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'role', 'status')
+class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Token serializer that authenticates with email + password."""
+    username_field = "email"
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+        
+        try:
+            user_obj = User.objects.get(email=email)
+            username = user_obj.username
+        except User.DoesNotExist:
+            raise serializers.ValidationError('No active account found with the given credentials')
+
+        user = authenticate(request=self.context.get('request'), username=username, password=password)
+        if not user:
+            raise serializers.ValidationError('No active account found with the given credentials')
+            
+        if not user.is_active:
+            raise serializers.ValidationError('No active account found with the given credentials')
+
+        refresh = self.get_token(user)
+
+        data = {}
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+        data['user_id'] = user.id
+        data['email'] = user.email
+
+        return data
+

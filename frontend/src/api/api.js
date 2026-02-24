@@ -69,7 +69,11 @@ api.interceptors.response.use(
         if (res.status === 200) {
           const { access } = res.data;
           localStorage.setItem("accessToken", access);
+
+          // Update the default header and the failing request's header
           api.defaults.headers.common["Authorization"] = `Bearer ${access}`;
+          originalRequest.headers.Authorization = `Bearer ${access}`;
+
           processQueue(null, access);
           return api(originalRequest);
         }

@@ -21,9 +21,9 @@ const DashboardHome = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    api.get("users/").then((res) => setUsers(res.data));
-    api.get("products/").then((res) => setProducts(res.data));
-    api.get("orders/").then((res) => setOrders(res.data));
+    api.get("users/").then((res) => setUsers(Array.isArray(res.data) ? res.data : []));
+    api.get("products/?no_pagination=true").then((res) => setProducts(Array.isArray(res.data) ? res.data : []));
+    api.get("orders/").then((res) => setOrders(Array.isArray(res.data) ? res.data : []));
   }, []);
 
   const formatCurrency = (value) => {
@@ -44,14 +44,14 @@ const DashboardHome = () => {
     );
   }, 0);
 
-  const revenueData = products.map((product) => {
+  const revenueData = Array.isArray(products) ? products.map((product) => {
     const productRevenue = orders.reduce((acc, order) => {
-      if (!order.items) return acc;
+      if (!order.items || !Array.isArray(order.items)) return acc;
       const item = order.items.find((i) => i.id === product.id);
       return acc + (item ? item.price * item.quantity : 0);
     }, 0);
     return { name: product.name, revenue: productRevenue };
-  });
+  }) : [];
 
   const statusCounts = orders.reduce((acc, order) => {
     acc[order.status] = (acc[order.status] || 0) + 1;
@@ -63,13 +63,15 @@ const DashboardHome = () => {
     value: statusCounts[status],
   }));
 
-  const recentOrders = orders
-    .slice(-5)
-    .reverse()
-    .map((order) => ({
-      ...order,
-      userName: users.find((u) => u.id === order.userId)?.name || "Unknown",
-    }));
+  const recentOrders = Array.isArray(orders) 
+    ? orders
+        .slice(-5)
+        .reverse()
+        .map((order) => ({
+          ...order,
+          userName: Array.isArray(users) ? users.find((u) => u.id === order.userId)?.name || "Unknown" : "Unknown",
+        }))
+    : [];
 
   const topProducts = [...revenueData]
     .sort((a, b) => b.revenue - a.revenue)

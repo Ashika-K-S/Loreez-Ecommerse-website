@@ -39,31 +39,45 @@ export default function CheckoutPage() {
     }, 0);
   }, [items]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    toast.success(
-      `Order placed successfully! Total: ₹${totalPrice.toLocaleString()}`,
-      {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored",
-      }
-    );
+    try {
+      await api.post("/orders/checkout/", {
+        shipping_address: formData.address,
+        payment_method: formData.paymentMethod,
+        phone: formData.phone,
+      });
 
-    if (clearCart) clearCart();
+      toast.success(
+        `Order placed successfully! Total: ₹${totalPrice.toLocaleString()}`,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "colored",
+        }
+      );
 
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      address: "",
-      paymentMethod: "Cash on Delivery",
-    });
+      if (clearCart) clearCart();
 
-    setTimeout(() => {
-      navigate("/");
-    }, 3000);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        paymentMethod: "Cash on Delivery",
+      });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
+    } catch (err) {
+      console.error("Error placing order:", err);
+      toast.error(err.response?.data?.detail || "Failed to place order");
+    } finally {
+      setLoading(false);
+    }
   };
 
   

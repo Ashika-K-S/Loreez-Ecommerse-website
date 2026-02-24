@@ -99,7 +99,7 @@ const ProductDetailPage = () => {
           <div className="flex flex-col justify-between">
             <div>
               <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
-              <p className="text-gray-500 mb-2">{product.category}</p>
+              <p className="text-gray-500 mb-2">{product.category_name}</p>
               <div className="flex items-center gap-2 mb-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star

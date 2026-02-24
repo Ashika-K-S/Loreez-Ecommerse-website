@@ -16,9 +16,9 @@ export const AuthProvider = ({ children }) => {
       if (storedUser && accessToken) {
         try {
           setUser(JSON.parse(storedUser));
+          // Ensure the default header is set for initial requests
+          api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
           // Optionally verify token with a "Me" endpoint
-          // const res = await api.get("users/me/");
-          // setUser(res.data);
         } catch (err) {
           console.error("Auth initialization error:", err);
           logout();
@@ -33,6 +33,12 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
+    
+    // Set default header immediately on login
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
   };
 
   const logout = () => {

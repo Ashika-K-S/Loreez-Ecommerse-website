@@ -18,34 +18,39 @@ const ProductsPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
+    let url = "products/";
+    const params = new URLSearchParams();
+    
+    if (category && category !== "All") {
+      params.append("category", category.toLowerCase()); // Backend likely uses lowercase slugs
+    }
+    if (searchTerm) {
+      params.append("search", searchTerm);
+    }
+
+    const queryString = params.toString();
+    if (queryString) {
+      url += `?${queryString}`;
+    }
+
     api
-      .get("products/")
+      .get(url)
       .then((res) => {
-        setProducts(res.data);
+        // Handle paginated response or direct array
+        const data = res.data.results || (Array.isArray(res.data) ? res.data : []);
+        setProducts(data);
         setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching products:", err);
         setLoading(false);
       });
-  }, []);
+  }, [category, searchTerm]);
 
   const categories = ["All", "Necklaces", "Rings", "Earrings", "Bangles"];
 
-const filteredProducts = products.filter((product) => {
-  const productName = product.name || "";
-  const productCategory = product.category_name || "";
-  const search = searchTerm || "";
-
-  const matchesCategory =
-    category === "All" || productCategory === category;
-
-  const matchesSearch =
-    productName.toLowerCase().includes(search.toLowerCase()) ||
-    productCategory.toLowerCase().includes(search.toLowerCase());
-
-  return matchesCategory && matchesSearch;
-});
+const filteredProducts = products;
 
 const sortedProducts = [...filteredProducts].sort((a, b) => {
   const priceA = Number(a.price) || 0;

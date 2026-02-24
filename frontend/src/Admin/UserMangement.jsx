@@ -6,12 +6,12 @@ import ProtectedRoute from "../Pages/Protect";
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [toast, setToast] = useState(""); 
-  const [newUser, setNewUser] = useState({ username: "", email: "", role: "user", password: "password123", status: "active" });
+  const [newUser, setNewUser] = useState({ name: "", email: "", role: "user", password: "password123", status: "active" });
 
   
   useEffect(() => {
     api.get("users/")
-      .then(res => setUsers(res.data))
+      .then(res => setUsers(Array.isArray(res.data) ? res.data : []))
       .catch(err => console.log(err));
   }, []);
 
@@ -23,7 +23,7 @@ const UserManagement = () => {
         setUsers(prev =>
           prev.map(u => (u.id === user.id ? { ...u, status: updatedStatus } : u))
         );
-        setToast(`${user.name} has been ${updatedStatus === "active" ? "unblocked" : "blocked"}`);
+        setToast(`${user.username || user.name} has been ${updatedStatus === "active" ? "unblocked" : "blocked"}`);
         setTimeout(() => setToast(""), 3000); 
       });
   };
@@ -35,10 +35,14 @@ const UserManagement = () => {
       .then(res => {
         setUsers(prev => [...prev, res.data]);
         setToast(`${newUser.name} has been added!`);
-        setNewUser({ name: "", email: "", role: "user", status: "active" });
+        setNewUser({ name: "", email: "", role: "user", password: "password123", status: "active" });
         setTimeout(() => setToast(""), 3000);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        setToast("Failed to add user. Check if email/username already exists.");
+        setTimeout(() => setToast(""), 3000);
+      });
   };
 
   const nonAdminUsers = users.filter(u => u.role !== "admin");
@@ -61,8 +65,8 @@ const UserManagement = () => {
           <input
             type="text"
             placeholder="Name"
-            value={newUser.username}
-            onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+            value={newUser.name}
+            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
             className="flex-1 border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
             required
           />

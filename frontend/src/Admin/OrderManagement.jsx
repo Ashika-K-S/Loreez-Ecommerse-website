@@ -12,7 +12,8 @@ const OrderManagement = () => {
   const fetchOrders = async () => {
     try {
       const res = await api.get("orders/");
-      setOrders(res.data);
+      const ordersData = res.data.results || (Array.isArray(res.data) ? res.data : []);
+      setOrders(ordersData);
     } catch (err) {
       console.error("Error fetching orders:", err);
     }
@@ -65,9 +66,9 @@ const OrderManagement = () => {
           {orders.map((order) => (
             <tr key={order.id} className="hover:bg-gray-50 transition">
               <td className="py-2 px-4 border-b">{order.id}</td>
-              <td className="py-2 px-4 border-b">{order.userId}</td>
-              <td className="py-2 px-4 border-b">₹{order.total}</td>
-              <td className="py-2 px-4 border-b">{order.date}</td>
+              <td className="py-2 px-4 border-b">{order.user_id}</td>
+              <td className="py-2 px-4 border-b">₹{order.total_amount}</td>
+              <td className="py-2 px-4 border-b">{new Date(order.created_at).toLocaleDateString()}</td>
               <td className="py-2 px-4 border-b">{order.status}</td>
               <td className="py-2 px-4 border-b">
                 {order.status !== "delivered" && (

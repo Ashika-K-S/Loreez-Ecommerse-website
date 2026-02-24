@@ -68,7 +68,7 @@ const OrderPage = () => {
             <ul className="list-disc ml-6">
               {order.items.map((item, index) => (
                 <li key={index}>
-                  {item.product_name} x {item.quantity} (₹{Number(item.price_at_ordered).toLocaleString()})
+                  {item.product_name} x {item.quantity} (₹{Number(item.price).toLocaleString()})
                 </li>
               ))}
             </ul>

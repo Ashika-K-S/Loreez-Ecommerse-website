@@ -4,4 +4,4 @@ from rest_framework.permissions import BasePermission
 class IsAdminUserOnly(BasePermission):
     
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_staff)
+        return bool(request.user and request.user.is_authenticated and (request.user.is_staff or getattr(request.user, 'role', '') == 'admin'))
