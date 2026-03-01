@@ -4,7 +4,6 @@ import {
   HeartIcon,
   ShoppingCartIcon,
   UserIcon,
-  HomeIcon,
 } from "@heroicons/react/24/outline";
 import { useStore } from "../Context/StoreContext";
 import { useAuth } from "../Context/AuthContext";
@@ -17,69 +16,84 @@ export default function Navbar() {
   const handleLogout = () => logout();
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-yellow-500">
-      <div className="container mx-auto px-6 py-3 flex justify-between items-center">
-        <div className="flex items-center space-x-6">
-          <h1
-            onClick={handleLogoClick}
-            className="text-3xl font-extrabold text-yellow-600 cursor-pointer tracking-wide">
-            LOREEZ
-          </h1>
-
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-stone-200/50 transition-all duration-500">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-5 flex justify-between items-center text-gray-900">
+        
+        {/* Left Side: Navigation Links */}
+        <div className="hidden md:flex items-center space-x-10 w-1/3">
           <Link
             to="/"
-            className="flex items-center gap-1 text-yellow-600 hover:text-yellow-800 font-medium">
-            <HomeIcon className="h-5 w-5" /> Home
+            className="text-[10px] uppercase tracking-[0.3em] font-semibold hover:text-stone-500 transition-colors"
+          >
+            Home
           </Link>
-
           <Link
             to="/products"
-            className="text-yellow-600 hover:text-yellow-800 font-medium">
-            Products
+            className="text-[10px] uppercase tracking-[0.3em] font-semibold hover:text-stone-500 transition-colors"
+          >
+            Collection
           </Link>
         </div>
 
-        <div className="flex items-center space-x-4">
+        {/* Center: Brand Identity */}
+        <div className="flex justify-center w-1/3">
+          <h1
+            onClick={handleLogoClick}
+            className="text-2xl md:text-3xl font-serif text-gray-950 cursor-pointer tracking-[0.25em] uppercase hover:scale-[1.02] transition-transform duration-300"
+          >
+            Loreez
+          </h1>
+        </div>
+
+        {/* Right Side: Icons & Auth */}
+        <div className="flex items-center justify-end space-x-8 w-1/3">
           <Link
             to="/wishlist"
-            className="relative text-yellow-600 hover:text-yellow-800">
-            <HeartIcon className="h-6 w-6" />
+            className="relative hover:text-stone-500 transition-colors"
+          >
+            <HeartIcon className="h-5 w-5 stroke-[1.2]" />
             {wishlist.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
+              <span className="absolute -top-1 -right-1 bg-gray-950 text-white text-[8px] w-3.5 h-3.5 rounded-full flex items-center justify-center">
                 {wishlist.length}
               </span>
             )}
           </Link>
+          
           <Link
             to="/cart"
-            className="relative text-yellow-600 hover:text-yellow-800">
-            <ShoppingCartIcon className="h-6 w-6" />
+            className="relative hover:text-stone-500 transition-colors"
+          >
+            <ShoppingCartIcon className="h-5 w-5 stroke-[1.2]" />
             {cart.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">
+              <span className="absolute -top-1 -right-1 bg-gray-950 text-white text-[8px] w-3.5 h-3.5 rounded-full flex items-center justify-center">
                 {cart.reduce((sum, item) => sum + (item.quantity || 1), 0)}
               </span>
             )}
           </Link>
+          
           {user ? (
             <div className="relative group">
-              <button className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-xl shadow-lg hover:bg-yellow-600 transition-all duration-300 font-semibold">
-                <UserIcon className="h-6 w-6" />
-                <span>Account</span>
+              <button className="flex items-center hover:text-stone-500 transition-colors outline-none">
+                <UserIcon className="h-5 w-5 stroke-[1.2]" />
               </button>
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100 transform transition-all duration-200 z-50">
+              <div className="absolute right-0 mt-4 w-44 bg-white border border-stone-200 shadow-2xl opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 z-50 py-2">
                 <Link
                   to="/profile"
-                  className="block px-4 py-3 hover:bg-yellow-50 font-medium text-gray-700 rounded-t-xl transition-colors">
-                  Profile
+                  className="block px-6 py-3 text-[10px] tracking-widest uppercase text-gray-600 hover:text-gray-900 hover:bg-stone-50 transition-colors"
+                >
+                  Account
                 </Link>
                 <Link
                   to="/orders"
-                  className="block px-4 py-3 hover:bg-yellow-50 font-medium text-gray-700 transition-colors">
+                  className="block px-6 py-3 text-[10px] tracking-widest uppercase text-gray-600 hover:text-gray-900 hover:bg-stone-50 transition-colors"
+                >
                   Orders
                 </Link>
+                <div className="h-[1px] bg-stone-100 mx-4 my-1"></div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-3 hover:bg-yellow-50 font-medium text-gray-700 rounded-b-xl transition-colors">
+                  className="w-full text-left px-6 py-3 text-[10px] tracking-widest uppercase text-red-800 hover:bg-stone-50 transition-colors"
+                >
                   Logout
                 </button>
               </div>
@@ -87,9 +101,9 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-xl shadow-lg hover:bg-yellow-600 transition-all duration-300 font-semibold">
-              <UserIcon className="h-6 w-6" />
-              <span>Login</span>
+              className="text-[10px] uppercase tracking-[0.3em] font-semibold border-b border-transparent hover:border-gray-900 transition-all"
+            >
+              Sign In
             </Link>
           )}
         </div>
@@ -97,3 +111,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

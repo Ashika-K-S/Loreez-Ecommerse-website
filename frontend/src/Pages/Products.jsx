@@ -77,44 +77,44 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-stone-50 p-6 pt-24 font-sans">
-        <h1 className="text-4xl md:text-5xl font-serif tracking-widest text-center mb-10 text-gray-900 uppercase">
+      <div className="min-h-screen bg-stone-50 p-4 pt-20 font-sans">
+        <h1 className="text-3xl md:text-4xl font-serif tracking-widest text-center mb-6 text-gray-900 uppercase">
           Our Collection
         </h1>
         
         <div className="max-w-7xl mx-auto">
-          {/* Filters & Search Bar */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+          {/* Filters & Search Bar - More Compact */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
             
             {/* Search */}
             <div className="flex w-full md:w-auto relative">
               <input
                 type="text"
-                placeholder="Search pieces..."
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full md:w-80 border-b-2 border-gray-300 bg-transparent py-2 pl-2 pr-10 focus:outline-none focus:border-gray-900 transition-colors placeholder-gray-400"
+                className="w-full md:w-64 border-b border-stone-300 bg-transparent py-1.5 pl-1 pr-8 focus:outline-none focus:border-gray-900 transition-colors placeholder-gray-400 text-sm"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
                 >
                   ✕
                 </button>
               )}
             </div>
 
-            {/* Categories */}
-            <div className="flex gap-6 overflow-x-auto pb-2 w-full md:w-auto justify-start md:justify-center no-scrollbar">
+            {/* Categories - Compact */}
+            <div className="flex gap-4 overflow-x-auto pb-1 w-full md:w-auto justify-start md:justify-center no-scrollbar">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCategory(cat)}
-                  className={`whitespace-nowrap pb-1 tracking-wider uppercase text-sm transition-all duration-300 ${
+                  className={`whitespace-nowrap pb-1 tracking-widest uppercase text-[10px] md:text-xs transition-all duration-300 ${
                     category === cat
-                      ? "text-gray-900 border-b-2 border-gray-900 font-medium"
-                      : "text-gray-400 hover:text-gray-600 border-b-2 border-transparent"
+                      ? "text-gray-900 border-b border-gray-900 font-semibold"
+                      : "text-gray-400 hover:text-gray-600 border-b border-transparent"
                   }`}
                 >
                   {cat}
@@ -122,12 +122,12 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
               ))}
             </div>
 
-            {/* Sort */}
-            <div className="w-full md:w-auto">
+            {/* Sort - Compact */}
+            <div className="w-full md:w-auto px-1">
               <select
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="w-full md:w-auto bg-transparent border-b-2 border-gray-300 py-2 text-gray-600 focus:outline-none focus:border-gray-900 uppercase tracking-wider text-sm cursor-pointer"
+                className="w-full md:w-auto bg-transparent border-b border-stone-300 py-1.5 text-gray-600 focus:outline-none focus:border-gray-900 uppercase tracking-widest text-[10px] cursor-pointer"
               >
                 <option value="default">Sort By</option>
                 <option value="lowToHigh">Price: Low - High</option>
@@ -138,21 +138,21 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
 
           {/* Product Grid */}
           {sortedProducts.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-gray-500 font-serif text-xl">No extraordinary pieces found.</p>
+            <div className="text-center py-16">
+              <p className="text-gray-500 font-serif text-lg">No extraordinary pieces found.</p>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                 {sortedProducts.map((product) => (
-                  <div key={product.id} className="group flex flex-col cursor-pointer">
-                    <div className="relative overflow-hidden bg-white mb-4">
-                      {/* Image */}
+                  <div key={product.id} className="group flex flex-col cursor-pointer bg-white">
+                    <div className="relative overflow-hidden mb-3">
+                      {/* Image with Robust Fallback */}
                       <Link to={`/product/${product.id}`}>
                         <img
-                          src={product.image}
+                          src={product.image || "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=600&auto=format&fit=crop"}
                           alt={product.name}
-                          className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-105"
+                          className="w-full aspect-[4/5] object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
                         />
                       </Link>
                       
@@ -162,10 +162,10 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
                           e.preventDefault();
                           toggleWishlist(product);
                         }}
-                        className="absolute top-4 right-4 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
+                        className="absolute top-2 right-2 z-10 p-1.5 bg-white/70 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
                       >
                         <Heart
-                          size={18}
+                          size={14}
                           className={`transition-colors ${
                             wishlist.find((item) => item.product?.id === product.id)
                               ? "text-red-500 fill-red-500"
@@ -181,9 +181,9 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
                             e.preventDefault();
                             addToCart(product);
                           }}
-                          className="flex-1 bg-white text-gray-900 py-3 text-sm font-medium uppercase tracking-wider hover:bg-gray-100 transition-colors"
+                          className="flex-1 bg-white/90 backdrop-blur-md text-gray-900 py-2.5 text-[10px] font-medium uppercase tracking-widest hover:bg-white transition-colors"
                         >
-                          Add to Cart
+                          Cart
                         </button>
                         <button
                           onClick={(e) => {
@@ -195,27 +195,27 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
                                   quantity: 1, 
                                   price_at_added: product.price 
                                 }] 
-                              } 
+                               } 
                             });
                           }}
-                          className="flex-1 bg-gray-900 text-white py-3 text-sm font-medium uppercase tracking-wider hover:bg-black transition-colors"
+                          className="flex-1 bg-gray-900 text-white py-2.5 text-[10px] font-medium uppercase tracking-widest hover:bg-black transition-colors"
                         >
-                          Buy Now
+                          Buy
                         </button>
                       </div>
                     </div>
 
-                    {/* Product Info */}
-                    <div className="text-center px-2">
-                      <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">
+                    {/* Product Info - Tighter spacing */}
+                    <div className="text-center px-1 pb-3">
+                      <p className="text-[10px] text-stone-400 uppercase tracking-widest mb-0.5">
                         {product.category_name}
                       </p>
                       <Link to={`/product/${product.id}`}>
-                        <h2 className="text-lg font-serif text-gray-900 mb-1 leading-snug hover:text-stone-500 transition-colors">
+                        <h2 className="text-sm font-serif text-gray-900 mb-0.5 leading-snug hover:text-stone-500 transition-colors line-clamp-1">
                           {product.name}
                         </h2>
                       </Link>
-                      <p className="text-gray-600 font-medium tracking-wide">
+                      <p className="text-xs text-gray-600 font-light tracking-wide">
                         ₹{Number(product.price).toLocaleString()}
                       </p>
                     </div>
