@@ -77,149 +77,183 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-50 p-6 pt-24">
-        <h1 className="text-3xl font-bold text-center mb-8 text-yellow-700">
-          Our Products
+      <div className="min-h-screen bg-stone-50 p-6 pt-24 font-sans">
+        <h1 className="text-4xl md:text-5xl font-serif tracking-widest text-center mb-10 text-gray-900 uppercase">
+          Our Collection
         </h1>
-        <div className="flex justify-center mb-6">
-          <input
-            type="text"
-            placeholder="Search by name or category..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="border p-2 w-72 rounded-l-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-          <button
-            onClick={() => setSearchTerm("")}
-            className="bg-yellow-400 text-white px-4 rounded-r-md"
-          >
-            Clear
-          </button>
-        </div>
-
-       
-        <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6 flex-wrap">
-         
-          <div className="flex gap-2 flex-wrap justify-center">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategory(cat)}
-                className={`px-5 py-2 rounded-full font-semibold border-2 ${
-                  category === cat
-                    ? "bg-yellow-400 text-white border-yellow-500 shadow-lg"
-                    : "bg-white text-gray-700 border-gray-300"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="px-5 py-2 rounded-full font-semibold border-2 bg-white text-gray-700 border-gray-300 shadow-sm hover:shadow-lg focus:outline-none"
-          >
-            <option value="default">Sort by</option>
-            <option value="lowToHigh">Price: Low to High</option>
-            <option value="highToLow">Price: High to Low</option>
-          </select>
-        </div>
-        {sortedProducts.length === 0 ? (
-          <p className="text-center mt-10">No products found</p>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {sortedProducts.map((product) => (
-              <div
-                key={product.id}
-                className="relative bg-white p-4 rounded-lg shadow flex flex-col">
+        
+        <div className="max-w-7xl mx-auto">
+          {/* Filters & Search Bar */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+            
+            {/* Search */}
+            <div className="flex w-full md:w-auto relative">
+              <input
+                type="text"
+                placeholder="Search pieces..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full md:w-80 border-b-2 border-gray-300 bg-transparent py-2 pl-2 pr-10 focus:outline-none focus:border-gray-900 transition-colors placeholder-gray-400"
+              />
+              {searchTerm && (
                 <button
-                  onClick={() => toggleWishlist(product)}
-                  className={`absolute top-2 right-2 p-2 rounded-full ${
-                    wishlist.find((item) => item.product?.id === product.id)
-                      ? "bg-red-100 text-red-500"
-                      : "bg-gray-100 text-gray-400"
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-900"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Categories */}
+            <div className="flex gap-6 overflow-x-auto pb-2 w-full md:w-auto justify-start md:justify-center no-scrollbar">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`whitespace-nowrap pb-1 tracking-wider uppercase text-sm transition-all duration-300 ${
+                    category === cat
+                      ? "text-gray-900 border-b-2 border-gray-900 font-medium"
+                      : "text-gray-400 hover:text-gray-600 border-b-2 border-transparent"
                   }`}
                 >
-                  <Heart
-                    size={20}
-                    fill={
-                      wishlist.find((item) => item.product?.id === product.id)
-                        ? "red"
-                        : "none"
-                    }
-                  />
+                  {cat}
                 </button>
-                <Link to={`/product/${product.id}`}>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-48 object-cover rounded"
-                  />
-                  <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
-                  <p className="text-sm text-gray-500">{product.category_name}</p>
-                  <p className="text-yellow-600 font-bold mt-1">
-                    ₹{Number(product.price).toLocaleString()}
-                  </p>
-                </Link>
-                <div className="mt-3 flex gap-2">
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-md font-semibold hover:bg-gray-300 transition"
-                  >
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate("/checkout", { 
-                        state: { 
-                          items: [{ 
-                            product: product, 
-                            quantity: 1, 
-                            price_at_added: product.price 
-                          }] 
-                        } 
-                      });
-                    }}
-                    className="flex-1 bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-700 transition"
-                  >
-                    Buy Now
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-            <div className="flex justify-center items-center gap-4 mt-10 mb-4">
-              <button
-                disabled={!prevUrl}
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className={`px-4 py-2 rounded-md font-semibold transition ${
-                  prevUrl
-                    ? "bg-yellow-400 text-white hover:bg-yellow-500"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
-              >
-                Previous
-              </button>
-              <span className="font-semibold text-gray-700">
-                Page {currentPage}
-              </span>
-              <button
-                disabled={!nextUrl}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className={`px-4 py-2 rounded-md font-semibold transition ${
-                  nextUrl
-                    ? "bg-yellow-400 text-white hover:bg-yellow-500"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
-              >
-                Next
-              </button>
+              ))}
             </div>
-          </>
-        )}
+
+            {/* Sort */}
+            <div className="w-full md:w-auto">
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="w-full md:w-auto bg-transparent border-b-2 border-gray-300 py-2 text-gray-600 focus:outline-none focus:border-gray-900 uppercase tracking-wider text-sm cursor-pointer"
+              >
+                <option value="default">Sort By</option>
+                <option value="lowToHigh">Price: Low - High</option>
+                <option value="highToLow">Price: High - Low</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Product Grid */}
+          {sortedProducts.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-gray-500 font-serif text-xl">No extraordinary pieces found.</p>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+                {sortedProducts.map((product) => (
+                  <div key={product.id} className="group flex flex-col cursor-pointer">
+                    <div className="relative overflow-hidden bg-white mb-4">
+                      {/* Image */}
+                      <Link to={`/product/${product.id}`}>
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </Link>
+                      
+                      {/* Wishlist Button */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          toggleWishlist(product);
+                        }}
+                        className="absolute top-4 right-4 z-10 p-2 bg-white/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
+                      >
+                        <Heart
+                          size={18}
+                          className={`transition-colors ${
+                            wishlist.find((item) => item.product?.id === product.id)
+                              ? "text-red-500 fill-red-500"
+                              : "text-gray-600"
+                          }`}
+                        />
+                      </button>
+
+                      {/* Quick Add Buttons Overlay */}
+                      <div className="absolute left-0 bottom-0 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            addToCart(product);
+                          }}
+                          className="flex-1 bg-white text-gray-900 py-3 text-sm font-medium uppercase tracking-wider hover:bg-gray-100 transition-colors"
+                        >
+                          Add to Cart
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            navigate("/checkout", { 
+                              state: { 
+                                items: [{ 
+                                  product: product, 
+                                  quantity: 1, 
+                                  price_at_added: product.price 
+                                }] 
+                              } 
+                            });
+                          }}
+                          className="flex-1 bg-gray-900 text-white py-3 text-sm font-medium uppercase tracking-wider hover:bg-black transition-colors"
+                        >
+                          Buy Now
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="text-center px-2">
+                      <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">
+                        {product.category_name}
+                      </p>
+                      <Link to={`/product/${product.id}`}>
+                        <h2 className="text-lg font-serif text-gray-900 mb-1 leading-snug hover:text-stone-500 transition-colors">
+                          {product.name}
+                        </h2>
+                      </Link>
+                      <p className="text-gray-600 font-medium tracking-wide">
+                        ₹{Number(product.price).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              <div className="flex justify-center items-center gap-8 mt-16 mb-8">
+                <button
+                  disabled={!prevUrl}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className={`uppercase tracking-wider text-sm transition-colors pb-1 border-b ${
+                    prevUrl
+                      ? "text-gray-900 border-gray-900 hover:text-black"
+                      : "text-gray-400 border-transparent cursor-not-allowed"
+                  }`}
+                >
+                  Previous
+                </button>
+                <span className="font-serif italic text-gray-500">
+                  Page {currentPage}
+                </span>
+                <button
+                  disabled={!nextUrl}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  className={`uppercase tracking-wider text-sm transition-colors pb-1 border-b ${
+                    nextUrl
+                      ? "text-gray-900 border-gray-900 hover:text-black"
+                      : "text-gray-400 border-transparent cursor-not-allowed"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
       <Footer />
     </>
