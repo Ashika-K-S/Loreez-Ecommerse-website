@@ -20,7 +20,7 @@ class WishlistView(APIView):
             if item.product:
                 valid_items.append(item)
             else:
-                # Silently cleanup orphans
+                
                 item.delete()
         
         serializer = WishlistSerializer(valid_items, many=True)
