@@ -29,73 +29,77 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      
-      <div className="w-full max-w-md p-12 bg-white shadow-2xl rounded-3xl border border-gray-200">
-        
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-serif font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B]">
-            LOREEZ
+    <div className="min-h-screen flex items-center justify-center bg-stone-50 font-sans p-6">
+      <div className="w-full max-w-md p-10 md:p-12 bg-white border border-stone-200">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-[0.2em] uppercase mb-2">
+            Loreez
           </h1>
-
-        
-          <div className="mx-auto my-2 w-16 h-1 bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.6)]"></div>
-
-          <p className="text-sm text-gray-500 mt-2">jewellery</p>
+          <p className="text-xs text-stone-400 uppercase tracking-widest">Fine Jewelry</p>
         </div>
 
-        
-        <form onSubmit={formSubmit} className="w-full space-y-6">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={data.name}
-            onChange={stateChange}
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={data.email}
-            onChange={stateChange}
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={data.password}
-            onChange={stateChange}
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
-         <input
-            type="hidden"
-            name="role"
-            placeholder="user"
-            value={data.role}
-            onChange={stateChange}
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
+        <form onSubmit={formSubmit} className="w-full space-y-8">
+          <div className="space-y-6">
+            <div>
+              <input
+                required
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                value={data.name}
+                onChange={stateChange}
+                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
+              />
+            </div>
+            <div>
+              <input
+                required
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={data.email}
+                onChange={stateChange}
+                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
+              />
+            </div>
+            <div>
+              <input
+                required
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={data.password}
+                onChange={stateChange}
+                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
+              />
+            </div>
+            <input
+              type="hidden"
+              name="role"
+              value={data.role}
+              onChange={stateChange}
+            />
+          </div>
 
-          
-          <button className="relative w-full bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] text-white font-semibold py-4 rounded-xl shadow-lg text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
-            <span className="absolute top-0 left-0 w-1/2 h-full bg-white opacity-20 transform -translate-x-full animate-shimmer"></span>
-            Register
+          <button
+            type="submit"
+            className="w-full bg-gray-900 text-white py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
+          >
+            Create Account
           </button>
         </form>
 
-        
-        <p className="text-gray-600 text-center mt-6">
-          Already have an account?{" "}
-          <span
-            onClick={() => navigate("/login")}
-            className="text-black font-semibold cursor-pointer hover:underline"
-          >
-            Login
-          </span>
-        </p>
+        <div className="mt-10 pt-8 border-t border-stone-100 text-center">
+          <p className="text-xs text-stone-500 tracking-wider">
+            Already have an account?{" "}
+            <span
+              onClick={() => navigate("/login")}
+              className="text-gray-900 font-medium uppercase tracking-widest cursor-pointer hover:text-stone-500 transition-colors ml-2"
+            >
+              Sign In
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );

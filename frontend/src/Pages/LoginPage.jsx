@@ -51,20 +51,20 @@ function Login() {
 
   if (user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-xl shadow-md text-center">
-          <h2 className="text-2xl font-bold mb-4">
-            You are already logged in
+      <div className="min-h-screen flex items-center justify-center bg-stone-50 font-sans">
+        <div className="bg-white border border-stone-200 p-12 text-center max-w-md w-full">
+          <h2 className="text-xl font-serif text-gray-900 mb-4 uppercase tracking-wider">
+            Already Signed In
           </h2>
-          <p className="mb-4">Hello, {user.name}!</p>
+          <p className="text-stone-500 font-light mb-8">Welcome back, {user.name}.</p>
           <button
             onClick={() => {
               login(null);
               navigate("/login");
             }}
-            className="bg-red-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-600 transition-colors"
+            className="w-full bg-gray-900 text-white px-6 py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
           >
-            Logout
+            Sign Out
           </button>
         </div>
       </div>
@@ -72,53 +72,60 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-md p-12 bg-white shadow-2xl rounded-3xl border border-gray-200">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-serif font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B]">
-            LOREEZ
+    <div className="min-h-screen flex items-center justify-center bg-stone-50 font-sans p-6">
+      <div className="w-full max-w-md p-10 md:p-12 bg-white border border-stone-200">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-[0.2em] uppercase mb-2">
+            Loreez
           </h1>
-          <div className="mx-auto my-2 w-16 h-1 bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.6)]"></div>
-          <p className="text-sm text-gray-500 mt-2">jewellery</p>
+          <p className="text-xs text-stone-400 uppercase tracking-widest">Fine Jewelry</p>
         </div>
 
-        <form onSubmit={formsubmit} className="w-full space-y-6">
-          <input
-            required
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={data.email}
-            onChange={stateChange}
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
-          <input
-            required
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={data.password}
-            onChange={stateChange}
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
+        <form onSubmit={formsubmit} className="w-full space-y-8">
+          <div className="space-y-6">
+            <div>
+              <input
+                required
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={data.email}
+                onChange={stateChange}
+                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
+              />
+            </div>
+            <div>
+              <input
+                required
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={data.password}
+                onChange={stateChange}
+                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
+              />
+            </div>
+          </div>
 
           <button
             type="submit"
-            className="relative w-full bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] font-semibold py-4 rounded-xl shadow-lg text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
-            <span className="relative text-white bg-clip-text text-transparent bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B]">
-              Login
-            </span>
+            className="w-full bg-gray-900 text-white py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
+          >
+            Sign In
           </button>
         </form>
 
-        <p className="text-gray-600 text-center mt-6">
-          Don't have an account?{" "}
-          <span
-            onClick={() => navigate("/register")}
-            className="text-black font-semibold cursor-pointer hover:underline">
-            Register
-          </span>
-        </p>
+        <div className="mt-10 pt-8 border-t border-stone-100 text-center">
+          <p className="text-xs text-stone-500 tracking-wider">
+            Don't have an account?{" "}
+            <span
+              onClick={() => navigate("/register")}
+              className="text-gray-900 font-medium uppercase tracking-widest cursor-pointer hover:text-stone-500 transition-colors ml-2"
+            >
+              Register
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );

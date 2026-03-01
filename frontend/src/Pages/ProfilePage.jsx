@@ -29,84 +29,97 @@ export default function ProfilePage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen mt-24 bg-gray-50 p-6">
-        <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-3xl font-bold mb-6 text-yellow-700">Profile</h1>
+      <div className="min-h-screen pt-32 pb-24 bg-stone-50 font-sans">
+        <div className="max-w-2xl mx-auto px-6">
+          <h1 className="text-3xl md:text-4xl font-serif tracking-widest text-center mb-12 text-gray-900 uppercase">
+            My Account
+          </h1>
 
-          {!editMode ? (
-            <div className="space-y-4">
-              <p>
-                <span className="font-semibold">Email: </span>
-                {formData.email || "Not provided"}
-              </p>
-              <p>
-                <span className="font-semibold">Name: </span>
-                {formData.name || "Not provided"}
-              </p>
-              <p>
-                <span className="font-semibold">Phone: </span>
-                {formData.phone || "Not provided"}
-              </p>
+          <div className="bg-white border border-stone-200 p-8 md:p-12">
+            {!editMode ? (
+              <div className="space-y-8">
+                <div className="space-y-6">
+                  <div>
+                    <span className="block text-xs uppercase tracking-widest text-stone-500 mb-1">Email Address</span>
+                    <p className="text-lg font-light text-gray-900">{formData.email || "Not provided"}</p>
+                  </div>
+                  <div className="border-t border-stone-100 pt-6">
+                    <span className="block text-xs uppercase tracking-widest text-stone-500 mb-1">Full Name</span>
+                    <p className="text-lg font-light text-gray-900">{formData.name || "Not provided"}</p>
+                  </div>
+                  <div className="border-t border-stone-100 pt-6">
+                    <span className="block text-xs uppercase tracking-widest text-stone-500 mb-1">Phone Number</span>
+                    <p className="text-lg font-light text-gray-900">{formData.phone || "Not provided"}</p>
+                  </div>
+                </div>
 
-              <div className="flex gap-4 mt-4">
-                <button
-                  onClick={() => setEditMode(true)}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded shadow font-semibold transition">
-                  Edit Profile
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded shadow font-semibold transition">
-                  Logout
-                </button>
+                <div className="flex flex-col sm:flex-row gap-4 pt-8">
+                  <button
+                    onClick={() => setEditMode(true)}
+                    className="flex-1 bg-gray-900 text-white py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="flex-1 border-2 border-gray-900 bg-transparent text-gray-900 py-4 text-sm font-medium uppercase tracking-widest hover:bg-gray-900 hover:text-white transition-colors duration-300"
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <form onSubmit={handleSave} className="space-y-4">
-              <input
-                type="text"
-                placeholder="Name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                required/>
-              <input
-                type="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                required/>
-              <input
-                type="tel"
-                placeholder="Phone"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-                className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
-              />
-              <div className="flex gap-4 mt-4">
-                <button
-                  type="submit"
-                  className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded shadow font-semibold transition"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditMode(false)}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded shadow font-semibold transition"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
+            ) : (
+              <form onSubmit={handleSave} className="space-y-6">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-300"
+                    placeholder="Jane Doe"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-300"
+                    placeholder="jane@example.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-300"
+                    placeholder="10-digit mobile number"
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 pt-8">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-gray-900 text-white py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditMode(false)}
+                    className="flex-1 border-2 border-stone-300 bg-transparent text-stone-500 py-4 text-sm font-medium uppercase tracking-widest hover:border-gray-900 hover:text-gray-900 transition-colors duration-300"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
       </div>
       <Footer />

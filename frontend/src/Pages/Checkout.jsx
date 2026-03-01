@@ -98,132 +98,157 @@ export default function CheckoutPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen mt-24 bg-gray-50 p-6">
-        <h1 className="text-3xl font-bold mb-8 text-center text-yellow-700">
-          Checkout
+      <div className="min-h-screen pt-32 pb-24 bg-stone-50 font-sans">
+        <h1 className="text-3xl md:text-4xl font-serif tracking-widest text-center mb-12 text-gray-900 uppercase">
+          Secure Checkout
         </h1>
 
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-         
-          <div className="bg-white p-6 rounded-lg shadow-lg sticky top-24 h-fit">
-            <h2 className="text-2xl font-semibold mb-4">
-              Order Summary
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16">
+          
+          {/* Shipping & Payment Form (Left on Desktop, Top on Mobile) */}
+          <div className="md:col-span-7 lg:col-span-8 order-2 md:order-1">
+            <h2 className="text-lg font-serif tracking-widest uppercase mb-8 pb-4 border-b border-stone-200">
+              Delivery Details
             </h2>
 
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center border-b py-3"
-              >
-                <div className="flex items-center gap-4">
-                  <img
-                    src={item.product?.image}
-                    alt={item.product?.name}
-                    className="w-16 h-16 object-cover rounded"
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors placeholder-stone-300"
+                    placeholder="Jane Doe"
+                    required
                   />
-                  <div>
-                    <p className="font-semibold">
-                      {item.product?.name}
-                    </p>
-                    <p className="text-gray-500">
-                      {item.quantity} × ₹
-                      {Number(item.price_at_added).toLocaleString()}
-                    </p>
-                  </div>
                 </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors placeholder-stone-300"
+                    placeholder="jane@example.com"
+                    required
+                  />
+                </div>
+              </div>
 
-                <p className="font-bold">
-                  ₹
-                  {(
-                    Number(item.price_at_added) *
-                    Number(item.quantity)
-                  ).toLocaleString()}
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Phone Number</label>
+                <input
+                  type="tel"
+                  pattern="[0-9]{10}"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors placeholder-stone-300"
+                  placeholder="10-digit mobile number"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Shipping Address</label>
+                <textarea
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors resize-none placeholder-stone-300"
+                  placeholder="Full street address, city, postal code"
+                  rows={3}
+                  required
+                />
+              </div>
+
+              <div className="pt-6">
+                <h2 className="text-lg font-serif tracking-widest uppercase mb-6 pb-4 border-b border-stone-200">
+                  Payment Method
+                </h2>
+                <select
+                  value={formData.paymentMethod}
+                  onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
+                  className="w-full bg-transparent border-b border-stone-300 py-3 px-2 text-gray-700 focus:outline-none focus:border-gray-900 transition-colors uppercase tracking-wider text-sm cursor-pointer"
+                >
+                  <option>Cash on Delivery</option>
+                  <option>UPI Payment</option>
+                  <option>Debit/Credit Card</option>
+                  <option>Net Banking</option>
+                </select>
+              </div>
+
+              <div className="pt-8">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full py-5 text-sm font-medium uppercase tracking-widest transition-colors duration-300 ${
+                    loading ? 'bg-stone-300 text-stone-500 cursor-not-allowed' : 'bg-gray-900 text-white hover:bg-black'
+                  }`}
+                >
+                  {loading ? "Processing..." : `Complete Purchase • ₹${totalPrice.toLocaleString()}`}
+                </button>
+                <p className="text-center text-xs text-stone-400 mt-4 font-light tracking-wide">
+                  Your personal data will be used to process your order and support your experience throughout this website.
                 </p>
               </div>
-            ))}
+            </form>
+          </div>
 
-            <div className="text-right font-bold text-xl mt-4">
-              Total: ₹{totalPrice.toLocaleString()}
+          {/* Order Summary Sidebar (Right on Desktop, Bottom on Mobile) */}
+          <div className="md:col-span-5 lg:col-span-4 order-1 md:order-2 mb-12 md:mb-0">
+            <div className="bg-white border border-stone-200 p-8 sticky top-32">
+              <h2 className="text-lg font-serif tracking-widest uppercase mb-8 pb-4 border-b border-stone-200">
+                Order Summary
+              </h2>
+
+              <div className="space-y-6 mb-8 max-h-[50vh] overflow-y-auto pr-2 no-scrollbar">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex gap-4"
+                  >
+                    <div className="w-16 h-20 bg-stone-100 shrink-0 overflow-hidden">
+                      <img
+                        src={item.product?.image}
+                        alt={item.product?.name}
+                        className="w-full h-full object-cover mix-blend-multiply"
+                      />
+                    </div>
+                    <div className="flex-1 flex flex-col justify-center">
+                      <p className="font-serif text-sm text-gray-900 leading-snug mb-1">
+                        {item.product?.name}
+                      </p>
+                      <p className="text-xs text-stone-500 uppercase tracking-wider">
+                        Qty: {item.quantity}
+                      </p>
+                    </div>
+                    <div className="flex flex-col justify-center text-right">
+                      <p className="font-light text-sm text-gray-900">
+                        ₹{(Number(item.price_at_added) * Number(item.quantity)).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-stone-200 pt-6 space-y-4">
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span className="uppercase tracking-widest text-xs">Subtotal</span>
+                  <span>₹{totalPrice.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span className="uppercase tracking-widest text-xs">Shipping</span>
+                  <span className="text-stone-400">Complimentary</span>
+                </div>
+                <div className="flex justify-between items-center border-t border-stone-200 pt-6 mt-6">
+                  <span className="font-serif text-lg text-gray-900 uppercase tracking-widest">Total</span>
+                  <span className="font-serif text-xl text-gray-900">₹{totalPrice.toLocaleString()}</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4">
-              Shipping & Payment
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full border px-4 py-2 rounded"
-                required
-              />
-
-              <input
-                type="email"
-                placeholder="Email Address"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className="w-full border px-4 py-2 rounded"
-                required
-              />
-
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                pattern="[0-9]{10}"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData({ ...formData, phone: e.target.value })
-                }
-                className="w-full border px-4 py-2 rounded"
-                required
-              />
-
-              <textarea
-                placeholder="Delivery Address"
-                value={formData.address}
-                onChange={(e) =>
-                  setFormData({ ...formData, address: e.target.value })
-                }
-                className="w-full border px-4 py-2 rounded"
-                rows={4}
-                required
-              />
-
-              <select
-                value={formData.paymentMethod}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    paymentMethod: e.target.value,
-                  })
-                }
-                className="w-full border px-4 py-2 rounded"
-              >
-                <option>Cash on Delivery</option>
-                <option>UPI Payment</option>
-                <option>Debit/Credit Card</option>
-                <option>Net Banking</option>
-              </select>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full ${loading ? 'bg-gray-400' : 'bg-yellow-600 hover:bg-yellow-700'} text-white py-3 rounded font-semibold transition`}
-              >
-                {loading ? "Processing..." : `Place Order ₹${totalPrice.toLocaleString()}`}
-              </button>
-            </form>
-          </div>
         </div>
       </div>
       <Footer />

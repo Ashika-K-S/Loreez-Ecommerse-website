@@ -42,40 +42,69 @@ const OrderPage = () => {
     }
   };
 
-  if (!user) return <p className="text-center mt-10">Please log in to see your orders.</p>;
+  if (!user) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen pt-32 pb-24 bg-stone-50 font-sans flex items-center justify-center">
+          <p className="text-center text-stone-500 uppercase tracking-widest">Please log in to view your extraordinary acquisitions.</p>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
+    <>
+      <Navbar />
+      <div className="min-h-screen pt-32 pb-24 bg-stone-50 font-sans">
+        <div className="max-w-4xl mx-auto px-6">
+          <h1 className="text-3xl md:text-4xl font-serif tracking-widest text-center mb-16 text-gray-900 uppercase">
+            Order History
+          </h1>
 
-      <button
-        onClick={placeOrder}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-6"
-      >
-        Place Order
-      </button>
-
-      {orders.length === 0 ? (
-        <p>No orders yet.</p>
-      ) : (
-        orders.map(order => (
-          <div key={order.id} className="border p-4 mb-2 rounded shadow-sm bg-white">
-            <p><strong>Order ID:</strong> #{order.id}</p>
-            <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
-            <p><strong>Status:</strong> <span className="capitalize text-blue-600">{order.status}</span></p>
-            <p><strong>Total:</strong> ₹{Number(order.total_amount).toLocaleString()}</p>
-            <p className="mt-2"><strong>Items:</strong></p>
-            <ul className="list-disc ml-6">
-              {order.items.map((item, index) => (
-                <li key={index}>
-                  {item.product_name} x {item.quantity} (₹{Number(item.price).toLocaleString()})
-                </li>
+          {orders.length === 0 ? (
+            <div className="text-center py-20 border-y border-stone-200">
+              <p className="text-stone-500 font-light mb-8">You haven't made any purchases yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {orders.map(order => (
+                <div key={order.id} className="bg-white border border-stone-200 p-6 md:p-8">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-6 border-b border-stone-100">
+                    <div>
+                      <p className="text-xs text-stone-500 uppercase tracking-widest mb-1">Order #{order.id}</p>
+                      <p className="text-sm text-gray-900 font-medium">{new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                    <div className="mt-4 md:mt-0 text-left md:text-right">
+                      <p className="text-xs text-stone-500 uppercase tracking-widest mb-1">Status</p>
+                      <p className="text-sm font-medium text-green-700 uppercase tracking-wider">{order.status}</p>
+                    </div>
+                    <div className="mt-4 md:mt-0 text-left md:text-right">
+                      <p className="text-xs text-stone-500 uppercase tracking-widest mb-1">Total</p>
+                      <p className="text-lg font-serif text-gray-900">₹{Number(order.total_amount).toLocaleString()}</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-xs text-stone-500 uppercase tracking-widest mb-4">Acquired Pieces</p>
+                    <ul className="space-y-4">
+                      {order.items.map((item, index) => (
+                        <li key={index} className="flex justify-between items-center text-sm">
+                          <span className="font-serif text-gray-900">{item.product_name} <span className="text-stone-400 font-sans ml-2">× {item.quantity}</span></span>
+                          <span className="font-light text-gray-900">₹{Number(item.price).toLocaleString()}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               ))}
-            </ul>
-          </div>
-        ))
-      )}
-    </div>
+            </div>
+          )}
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

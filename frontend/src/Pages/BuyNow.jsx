@@ -22,30 +22,33 @@ function ProductCard({ product }) {
     });
   };
 
-  return (
-    <div className="bg-white p-4 rounded shadow">
-      <img
-        src={product.image}
-        alt={product.name}
-        className="w-full h-48 object-cover rounded"
-      />
+    <div className="group flex flex-col cursor-pointer bg-white">
+      <div className="relative overflow-hidden aspect-[4/5] bg-stone-100 mb-4">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover mix-blend-multiply transition-transform duration-700 group-hover:scale-105"
+        />
 
-      <h2 className="text-lg font-semibold mt-2">
-        {product.name}
-      </h2>
+        <div className="absolute left-0 bottom-0 w-full translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+          <button
+            onClick={handleBuyNow}
+            className="w-full bg-gray-900 text-white py-3 text-sm font-medium uppercase tracking-wider hover:bg-black transition-colors"
+          >
+            Buy Now
+          </button>
+        </div>
+      </div>
 
-      <p className="text-yellow-600 font-bold">
-        ₹{Number(product.price).toLocaleString()}
-      </p>
-
-      <button
-        onClick={handleBuyNow}
-        className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 mt-2 rounded-md w-full"
-      >
-        Buy Now
-      </button>
+      <div className="text-center px-2 pb-4">
+        <h2 className="text-lg font-serif text-gray-900 mb-1 leading-snug">
+          {product.name}
+        </h2>
+        <p className="text-gray-600 font-light tracking-wide">
+          ₹{Number(product.price).toLocaleString()}
+        </p>
+      </div>
     </div>
-  );
 }
 
 export default ProductCard;
