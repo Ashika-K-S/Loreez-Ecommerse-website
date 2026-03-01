@@ -43,7 +43,7 @@ const Home = () => {
         <section className="py-16 lg:py-24 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
            <div className="order-2 lg:order-1 relative aspect-[4/3] overflow-hidden group shadow-xl">
               <img 
-                src="https://images.unsplash.com/photo-1611085583191-a3b1a6a2e24a?q=80&w=2000&auto=format&fit=crop"
+                src="https://images.pexels.com/photos/1457801/pexels-photo-1457801.jpeg?auto=compress&cs=tinysrgb&w=1500"
                 alt="Jewelry Atelier" 
                 className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105"
               />
