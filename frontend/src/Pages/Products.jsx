@@ -15,7 +15,14 @@ const ProductsPage = () => {
   const [category, setCategory] = useState(initialCategory);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("default"); 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [nextUrl, setNextUrl] = useState(null);
+  const [prevUrl, setPrevUrl] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [category, searchTerm]);
 
   useEffect(() => {
     setLoading(true);
@@ -28,25 +35,20 @@ const ProductsPage = () => {
     if (searchTerm) {
       params.append("search", searchTerm);
     }
+    params.append("page", currentPage);
 
     const queryString = params.toString();
     if (queryString) {
       url += `?${queryString}`;
     }
 
-    const fetchAllProducts = async () => {
+    const fetchProducts = async () => {
       try {
-        let allProducts = [];
-        let nextUrl = url;
-        
-        while (nextUrl) {
-          const res = await api.get(nextUrl);
-          const data = res.data.results || (Array.isArray(res.data) ? res.data : []);
-          allProducts = [...allProducts, ...data];
-          nextUrl = res.data.next || null;
-        }
-        
-        setProducts(allProducts);
+        const res = await api.get(url);
+        const data = res.data.results || (Array.isArray(res.data) ? res.data : []);
+        setProducts(data);
+        setNextUrl(res.data.next || null);
+        setPrevUrl(res.data.previous || null);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -54,8 +56,8 @@ const ProductsPage = () => {
       }
     };
 
-    fetchAllProducts();
-  }, [category, searchTerm]);
+    fetchProducts();
+  }, [category, searchTerm, currentPage]);
 
   const categories = ["All", "Necklaces", "Rings", "Earrings", "Bangles"];
 
@@ -127,7 +129,8 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
         {sortedProducts.length === 0 ? (
           <p className="text-center mt-10">No products found</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {sortedProducts.map((product) => (
               <div
                 key={product.id}
@@ -188,6 +191,34 @@ const sortedProducts = [...filteredProducts].sort((a, b) => {
               </div>
             ))}
           </div>
+            <div className="flex justify-center items-center gap-4 mt-10 mb-4">
+              <button
+                disabled={!prevUrl}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className={`px-4 py-2 rounded-md font-semibold transition ${
+                  prevUrl
+                    ? "bg-yellow-400 text-white hover:bg-yellow-500"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Previous
+              </button>
+              <span className="font-semibold text-gray-700">
+                Page {currentPage}
+              </span>
+              <button
+                disabled={!nextUrl}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className={`px-4 py-2 rounded-md font-semibold transition ${
+                  nextUrl
+                    ? "bg-yellow-400 text-white hover:bg-yellow-500"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </div>
       <Footer />
