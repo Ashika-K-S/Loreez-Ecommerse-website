@@ -12,6 +12,12 @@ const getRefreshToken = () => localStorage.getItem("refreshToken");
 
 const isRefreshRequest = (url = "") => url.includes("/token/refresh/");
 
+const clearAuthState = () => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("user");
+};
+
 // Attach access token automatically
 api.interceptors.request.use((config) => {
   if (isRefreshRequest(config?.url)) {
@@ -41,7 +47,7 @@ const processQueue = (error, token = null) => {
   pendingRequests = [];
 };
 
-// Handle automatic token refresh
+// Handle automatic refresh
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -54,6 +60,13 @@ api.interceptors.response.use(
       !refreshToken ||
       isRefreshRequest(originalRequest?.url)
     ) {
+      // If 401 and not refresh request → clear auth
+      if (
+        error.response?.status === 401 &&
+        !isRefreshRequest(originalRequest?.url)
+      ) {
+        clearAuthState();
+      }
       return Promise.reject(error);
     }
 
@@ -91,11 +104,8 @@ api.interceptors.response.use(
       originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
       return api(originalRequest);
     } catch (refreshError) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-
+      clearAuthState();
       processQueue(refreshError, null);
-
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

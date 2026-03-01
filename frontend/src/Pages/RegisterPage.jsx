@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/api";
 import { toast } from "react-toastify";
+import api from "../utils/api";
 
 function Register() {
+  const navigate = useNavigate();
+
   const [data, setData] = useState({
     name: "",
     email: "",
     password: "",
+    role: "user",
   });
-
-  const navigate = useNavigate();
 
   const stateChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -18,88 +19,103 @@ function Register() {
 
   const formSubmit = async (e) => {
     e.preventDefault();
+
+    const name = data.name.trim();
+    const email = data.email.trim();
+    const password = data.password;
+
+    if (!name || !email || !password) {
+      toast.error("All fields are required");
+      return;
+    }
+
     try {
-      await api.post("users/register/", data);
-      toast.success("Registered successfully! You can now login.");
+      await api.post("/users/register/", {
+        name,
+        email,
+        password,
+        role: "user",
+      });
+
+      toast.success("Registration successful. Please login.");
       navigate("/login");
-      } catch (error) {
-      console.error("Error registering user:", error);
-      toast.error("Something went wrong. Try again.");
+    } catch (error) {
+      console.error("Registration error:", error?.response?.data || error.message);
+
+      toast.error(
+        error?.response?.data?.detail ||
+          "Registration failed. Please try again."
+      );
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 font-sans p-6">
-      <div className="w-full max-w-md p-10 md:p-12 bg-white border border-stone-200">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-[0.2em] uppercase mb-2">
-            Loreez
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-full max-w-md p-12 bg-white shadow-2xl rounded-3xl border border-gray-200">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-serif font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B]">
+            LOREEZ
           </h1>
-          <p className="text-xs text-stone-400 uppercase tracking-widest">Fine Jewelry</p>
+
+          <div className="mx-auto my-2 w-16 h-1 bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.6)]"></div>
+
+          <p className="text-sm text-gray-500 mt-2">jewellery</p>
         </div>
 
-        <form onSubmit={formSubmit} className="w-full space-y-8">
-          <div className="space-y-6">
-            <div>
-              <input
-                required
-                type="text"
-                name="name"
-                placeholder="Full Name"
-                value={data.name}
-                onChange={stateChange}
-                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
-              />
-            </div>
-            <div>
-              <input
-                required
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={data.email}
-                onChange={stateChange}
-                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
-              />
-            </div>
-            <div>
-              <input
-                required
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={data.password}
-                onChange={stateChange}
-                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
-              />
-            </div>
-            <input
-              type="hidden"
-              name="role"
-              value={data.role}
-              onChange={stateChange}
-            />
-          </div>
+        <form onSubmit={formSubmit} className="w-full space-y-6">
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Full Name"
+            value={data.name}
+            onChange={stateChange}
+            autoComplete="name"
+            required
+            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
+          />
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Email"
+            value={data.email}
+            onChange={stateChange}
+            autoComplete="email"
+            required
+            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
+          />
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Password"
+            value={data.password}
+            onChange={stateChange}
+            autoComplete="new-password"
+            required
+            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
+          />
 
           <button
             type="submit"
-            className="w-full bg-gray-900 text-white py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
+            className="relative w-full bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] text-white font-semibold py-4 rounded-xl shadow-lg text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
           >
-            Create Account
+            Register
           </button>
         </form>
 
-        <div className="mt-10 pt-8 border-t border-stone-100 text-center">
-          <p className="text-xs text-stone-500 tracking-wider">
-            Already have an account?{" "}
-            <span
-              onClick={() => navigate("/login")}
-              className="text-gray-900 font-medium uppercase tracking-widest cursor-pointer hover:text-stone-500 transition-colors ml-2"
-            >
-              Sign In
-            </span>
-          </p>
-        </div>
+        <p className="text-gray-600 text-center mt-6">
+          Already have an account?{" "}
+          <span
+            onClick={() => navigate("/login")}
+            className="text-black font-semibold cursor-pointer hover:underline"
+          >
+            Login
+          </span>
+        </p>
       </div>
     </div>
   );
