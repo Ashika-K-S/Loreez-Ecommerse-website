@@ -14,14 +14,38 @@ class WishlistView(APIView):
 
     def get(self, request):
         wishlist = Wishlist.objects.filter(user=request.user)
-        serializer = WishlistSerializer(wishlist, many=True)
+        # Filter out orphaned product references
+        valid_items = []
+        for item in wishlist:
+            if item.product:
+                valid_items.append(item)
+            else:
+                # Silently cleanup orphans
+                item.delete()
+        
+        serializer = WishlistSerializer(valid_items, many=True)
         return Response(serializer.data)
 
     def post(self, request):
         product_id = request.data.get('product_id')
         product = get_object_or_404(Product, id=product_id)
 
-        wishlist_item, created = Wishlist.objects.get_or_create(
+        wishlist_items = Wishlist.objects.filter(
+            user=request.user,
+            product=product
+        )
+
+        if wishlist_items.exists():
+            # Already exists, cleanup duplicates if any
+            if wishlist_items.count() > 1:
+                wishlist_item = wishlist_items[0]
+                wishlist_items.exclude(id=wishlist_item.id).delete()
+            return Response(
+                {"detail": "Product already in wishlist"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        Wishlist.objects.create(
             user=request.user,
             product=product
         )

@@ -13,10 +13,17 @@ class CartView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        cart, _ = Cart.objects.get_or_create(
-            user=request.user,
-            is_active=True
-        )
+        carts = Cart.objects.filter(user=request.user, is_active=True).order_by('-created_at')
+        
+        if carts.count() > 1:
+            # Keep the newest one active, deactivate others
+            cart = carts[0]
+            carts.exclude(id=cart.id).update(is_active=False)
+        elif carts.exists():
+            cart = carts[0]
+        else:
+            cart = Cart.objects.create(user=request.user, is_active=True)
+            
         serializer = CartSerializer(cart)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -52,10 +59,14 @@ class AddToCartView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        cart, _ = Cart.objects.get_or_create(
-            user=request.user,
-            is_active=True
-        )
+        carts = Cart.objects.filter(user=request.user, is_active=True).order_by('-created_at')
+        if carts.count() > 1:
+            cart = carts[0]
+            carts.exclude(id=cart.id).update(is_active=False)
+        elif carts.exists():
+            cart = carts[0]
+        else:
+            cart = Cart.objects.create(user=request.user, is_active=True)
 
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart,
