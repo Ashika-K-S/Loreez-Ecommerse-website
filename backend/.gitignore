@@ -1,0 +1,40 @@
+# ==============================
+# Node / Frontend
+# ==============================
+node_modules/
+dist/
+build/
+
+# ==============================
+# Python / Django
+# ==============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Django generated files
+staticfiles/
+media/
+db.sqlite3
+
+# ==============================
+# Environment Variables
+# ==============================
+.env
+config/.env
+
+# ==============================
+# Logs
+# ==============================
+*.log
+
+
+.DS_Store
+.vscode/
+.idea/

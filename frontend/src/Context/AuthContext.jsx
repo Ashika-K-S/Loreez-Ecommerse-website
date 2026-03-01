@@ -1,56 +1,76 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import api from "../api/api";
 
 const AuthContext = createContext();
 
+const getTokensFromUser = (userData) => {
+  if (!userData || typeof userData !== "object") {
+    return { accessToken: null, refreshToken: null };
+  }
+
+  return {
+    accessToken: userData.access || userData.accessToken || null,
+    refreshToken: userData.refresh || userData.refreshToken || null,
+  };
+};
+
+const clearAuthStorage = () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  // Initialize user from localStorage and verify session
   useEffect(() => {
-    const initializeAuth = async () => {
-      const storedUser = localStorage.getItem("user");
-      const accessToken = localStorage.getItem("accessToken");
-
-      if (storedUser && accessToken) {
-        try {
-          setUser(JSON.parse(storedUser));
-          // Token is handled by the api interceptor
-        } catch (err) {
-          console.error("Auth initialization error:", err);
-          logout();
-        }
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (err) {
+        console.error("Error parsing user from localStorage", err);
+        clearAuthStorage();
       }
-      setLoading(false);
-    };
-
-    initializeAuth();
+    }
   }, []);
 
   const login = (userData) => {
+    if (!userData) {
+      setUser(null);
+      clearAuthStorage();
+      return;
+    }
+
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
-    // Token is handled by the api interceptor
+
+    const { accessToken, refreshToken } = getTokensFromUser(userData);
+
+    if (accessToken) {
+      localStorage.setItem("accessToken", accessToken);
+    }
+
+    if (refreshToken) {
+      localStorage.setItem("refreshToken", refreshToken);
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    clearAuthStorage();
   };
 
   const updateUser = (updatedData) => {
     if (!user) return;
+
     const newUser = { ...user, ...updatedData };
     setUser(newUser);
     localStorage.setItem("user", JSON.stringify(newUser));
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser, loading }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
+      {children}
     </AuthContext.Provider>
   );
 };

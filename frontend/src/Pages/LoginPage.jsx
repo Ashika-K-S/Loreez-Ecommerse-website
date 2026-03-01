@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api/api";
+import axios from "axios";
 import { useAuth } from "../Context/AuthContext";
 import { toast } from "react-toastify";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "https://loreez.duckdns.org/api";
 
 function Login() {
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-  const { login, user } = useAuth();
+  const { login, logout, user } = useAuth();
 
   const stateChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -15,56 +18,69 @@ function Login() {
 
   const formsubmit = async (e) => {
     e.preventDefault();
+
+    const email = data.email.trim();
+    const password = data.password;
+
+    if (!email || !password) {
+      toast.error("Email and password are required");
+      return;
+    }
+
     try {
-      console.log(data.email)
-      console.log(data.password)
-      const result = await api.post("users/login/", data);
-      console.log(result.data)
+      const tokenResponse = await axios.post(`${API_BASE_URL}/token/`, {
+        email,
+        password,
+      });
 
-      if (result.data.user && result.data.user.id) {
-        if(result.data.user.status === "active"){
-          const { user: userData, access, refresh } = result.data;
-          
-          // Store tokens for the API interceptor
-          localStorage.setItem("accessToken", access);
-          localStorage.setItem("refreshToken", refresh);
-          
-          login(userData);
+      const accessToken = tokenResponse.data?.access;
+      const refreshToken = tokenResponse.data?.refresh;
 
-          toast.success("Login successful");
-          if (userData.role === "admin") {
-            navigate("/admin");
-          } else {
-            navigate("/");
-          }
-        } else {
-          toast.error("Admin Blocked You")
-        }
-      } else {
-        toast.error("Invalid Email or Password");
+      if (!accessToken || !refreshToken) {
+        throw new Error("Token response missing access or refresh token");
       }
+
+      // Attach token globally for future requests
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${accessToken}`;
+
+      login({
+        email,
+        name: email.split("@")[0],
+        role: "user",
+        access: accessToken,
+        refresh: refreshToken,
+      });
+
+      toast.success("Login successful");
+      navigate("/products");
     } catch (error) {
-      console.log("Login error", error);
-      alert("Something went wrong, please try again");
+      console.error("Login error:", error?.response?.data || error.message);
+      toast.error(
+        error?.response?.data?.detail ||
+          "Invalid credentials or server rejected login"
+      );
     }
   };
 
   if (user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-stone-50 font-sans">
-        <div className="bg-white border border-stone-200 p-12 text-center max-w-md w-full">
-          <h2 className="text-xl font-serif text-gray-900 mb-4 uppercase tracking-wider">
-            Already Signed In
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-xl shadow-md text-center">
+          <h2 className="text-2xl font-bold mb-4">
+            You are already logged in
           </h2>
-          <p className="text-stone-500 font-light mb-8">Welcome back, {user.name}.</p>
+          <p className="mb-4">Hello, {user.name}!</p>
           <button
             onClick={() => {
-              login(null);
+              logout();
+              delete axios.defaults.headers.common["Authorization"];
               navigate("/login");
             }}
-            className="w-full bg-gray-900 text-white px-6 py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
+            className="bg-red-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-600 transition-colors"
           >
-            Sign Out
+            Logout
           </button>
         </div>
       </div>
@@ -72,60 +88,44 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 font-sans p-6">
-      <div className="w-full max-w-md p-10 md:p-12 bg-white border border-stone-200">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-serif text-gray-900 tracking-[0.2em] uppercase mb-2">
-            Loreez
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-full max-w-md p-12 bg-white shadow-2xl rounded-3xl border border-gray-200">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-serif font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B]">
+            LOREEZ
           </h1>
-          <p className="text-xs text-stone-400 uppercase tracking-widest">Fine Jewelry</p>
+          <div className="mx-auto my-2 w-16 h-1 bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.6)]"></div>
+          <p className="text-sm text-gray-500 mt-2">jewellery</p>
         </div>
 
-        <form onSubmit={formsubmit} className="w-full space-y-8">
-          <div className="space-y-6">
-            <div>
-              <input
-                required
-                type="email"
-                name="email"
-                placeholder="Email Address"
-                value={data.email}
-                onChange={stateChange}
-                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
-              />
-            </div>
-            <div>
-              <input
-                required
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={data.password}
-                onChange={stateChange}
-                className="w-full bg-transparent border-b border-stone-300 py-3 px-2 focus:outline-none focus:border-gray-900 transition-colors text-gray-900 placeholder-stone-400 text-sm"
-              />
-            </div>
-          </div>
+        <form onSubmit={formsubmit} className="w-full space-y-6">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+            value={data.email}
+            onChange={stateChange}
+            className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+            value={data.password}
+            onChange={stateChange}
+            className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          />
 
           <button
             type="submit"
-            className="w-full bg-gray-900 text-white py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
+            className="w-full bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] text-white py-3 rounded-xl font-semibold hover:opacity-90 transition"
           >
-            Sign In
+            Login
           </button>
         </form>
-
-        <div className="mt-10 pt-8 border-t border-stone-100 text-center">
-          <p className="text-xs text-stone-500 tracking-wider">
-            Don't have an account?{" "}
-            <span
-              onClick={() => navigate("/register")}
-              className="text-gray-900 font-medium uppercase tracking-widest cursor-pointer hover:text-stone-500 transition-colors ml-2"
-            >
-              Register
-            </span>
-          </p>
-        </div>
       </div>
     </div>
   );
