@@ -34,18 +34,27 @@ const ProductsPage = () => {
       url += `?${queryString}`;
     }
 
-    api
-      .get(url)
-      .then((res) => {
-        // Handle paginated response or direct array
-        const data = res.data.results || (Array.isArray(res.data) ? res.data : []);
-        setProducts(data);
+    const fetchAllProducts = async () => {
+      try {
+        let allProducts = [];
+        let nextUrl = url;
+        
+        while (nextUrl) {
+          const res = await api.get(nextUrl);
+          const data = res.data.results || (Array.isArray(res.data) ? res.data : []);
+          allProducts = [...allProducts, ...data];
+          nextUrl = res.data.next || null;
+        }
+        
+        setProducts(allProducts);
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error fetching products:", err);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchAllProducts();
   }, [category, searchTerm]);
 
   const categories = ["All", "Necklaces", "Rings", "Earrings", "Bangles"];
