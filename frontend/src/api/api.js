@@ -7,7 +7,6 @@ const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_BASE_URL}/api/`,
 });
 
-// Prevent multiple refresh calls
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -24,6 +23,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
+      config.headers = config.headers || {};
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
