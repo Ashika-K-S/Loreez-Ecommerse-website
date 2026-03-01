@@ -1,4 +1,4 @@
-from rest_framework.views import APIView
+﻿from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,16 +21,15 @@ class WishlistView(APIView):
         product_id = request.data.get('product_id')
         product = get_object_or_404(Product, id=product_id)
 
-        wishlist_item, created = Wishlist.objects.get_or_create(
-            user=request.user,
-            product=product
-        )
-
-        if not created:
+        wishlist_items = Wishlist.objects.filter(user=request.user, product=product)
+        
+        if wishlist_items.exists():
             return Response(
                 {"detail": "Product already in wishlist"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        Wishlist.objects.create(user=request.user, product=product)
 
         return Response(
             {"detail": "Added to wishlist"},

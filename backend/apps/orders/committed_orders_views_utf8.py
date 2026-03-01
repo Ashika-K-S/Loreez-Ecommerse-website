@@ -1,4 +1,4 @@
-from rest_framework.views import APIView
+﻿from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
@@ -51,10 +51,15 @@ class CheckoutView(APIView):
 
     @transaction.atomic
     def post(self, request):
-        cart = Cart.objects.filter(
+        active_carts = Cart.objects.filter(
             user=request.user,
             is_active=True
-        ).select_for_update().first()
+        ).select_for_update().order_by('-created_at')
+        
+        cart = active_carts.first()
+        
+        if cart and active_carts.count() > 1:
+            active_carts.exclude(id=cart.id).update(is_active=False)
 
         if not cart or not cart.items.exists():
             return Response(
