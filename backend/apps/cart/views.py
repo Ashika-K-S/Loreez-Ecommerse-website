@@ -9,32 +9,51 @@ from .serializers import CartSerializer
 from apps.products.models import Product
 
 
+# -----------------------------
+# Utility: Get or Create Active Cart
+# -----------------------------
+def get_or_create_active_cart(user):
+    carts = Cart.objects.filter(user=user, is_active=True).order_by("-created_at")
+
+    if carts.count() > 1:
+        cart = carts.first()
+        carts.exclude(id=cart.id).update(is_active=False)
+    elif carts.exists():
+        cart = carts.first()
+    else:
+        cart = Cart.objects.create(user=user, is_active=True)
+
+    return cart
+
+
+# -----------------------------
+# GET CART
+# -----------------------------
 class CartView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        carts = Cart.objects.filter(user=request.user, is_active=True).order_by('-created_at')
-        
-        if carts.count() > 1:
-            # Keep the newest one active, deactivate others
-            cart = carts[0]
-            carts.exclude(id=cart.id).update(is_active=False)
-        elif carts.exists():
-            cart = carts[0]
-        else:
-            cart = Cart.objects.create(user=request.user, is_active=True)
-            
-        serializer = CartSerializer(cart)
+        cart = get_or_create_active_cart(request.user)
+
+        serializer = CartSerializer(cart, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
+# -----------------------------
+# ADD TO CART
+# -----------------------------
 class AddToCartView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        product_id = request.data.get('product_id')
-        quantity = request.data.get('quantity', 1)
+        product_id = request.data.get("product_id")
+        quantity = request.data.get("quantity", 1)
+
+        if not product_id:
+            return Response(
+                {"error": "product_id is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             quantity = int(quantity)
@@ -52,21 +71,13 @@ class AddToCartView(APIView):
 
         product = get_object_or_404(Product, id=product_id)
 
-      
         if quantity > product.stock:
             return Response(
                 {"error": "Not enough stock available"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        carts = Cart.objects.filter(user=request.user, is_active=True).order_by('-created_at')
-        if carts.count() > 1:
-            cart = carts[0]
-            carts.exclude(id=cart.id).update(is_active=False)
-        elif carts.exists():
-            cart = carts[0]
-        else:
-            cart = Cart.objects.create(user=request.user, is_active=True)
+        cart = get_or_create_active_cart(request.user)
 
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart,
@@ -95,14 +106,14 @@ class AddToCartView(APIView):
         )
 
 
-
-
+# -----------------------------
+# UPDATE / DELETE CART ITEM
+# -----------------------------
 class CartItemDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
-  
     def put(self, request, item_id):
-        quantity = request.data.get('quantity')
+        quantity = request.data.get("quantity")
 
         try:
             quantity = int(quantity)
@@ -125,7 +136,6 @@ class CartItemDetailView(APIView):
             cart__is_active=True
         )
 
-     
         if quantity > cart_item.product.stock:
             return Response(
                 {"error": "Not enough stock available"},
@@ -140,7 +150,6 @@ class CartItemDetailView(APIView):
             status=status.HTTP_200_OK
         )
 
-  
     def delete(self, request, item_id):
         cart_item = get_object_or_404(
             CartItem,

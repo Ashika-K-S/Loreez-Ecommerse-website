@@ -3,26 +3,22 @@ from .models import Cart, CartItem
 from apps.products.models import Product
 
 
+# -----------------------------
+# Product Serializer (for cart)
+# -----------------------------
 class CartItemProductSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-
     class Meta:
         model = Product
         fields = ['id', 'name', 'image']
-
-    def get_image(self, obj):
-        if obj.image and not obj.image.startswith('http'):
-            # Fallback for relative paths in development
-            return f"http://127.0.0.1:8000/static/{obj.image}"
-        return obj.image
+        # If using S3, Django automatically returns full URL via image.url
 
 
+# -----------------------------
+# Cart Item Serializer
+# -----------------------------
 class CartItemSerializer(serializers.ModelSerializer):
     product = CartItemProductSerializer(read_only=True)
-    product_name = serializers.CharField(
-        source='product.name',
-        read_only=True
-    )
+    product_name = serializers.CharField(source='product.name', read_only=True)
     subtotal = serializers.SerializerMethodField()
 
     class Meta:
@@ -40,6 +36,9 @@ class CartItemSerializer(serializers.ModelSerializer):
         return obj.quantity * obj.price_at_added
 
 
+# -----------------------------
+# Cart Serializer
+# -----------------------------
 class CartSerializer(serializers.ModelSerializer):
     items = CartItemSerializer(many=True, read_only=True)
     total_amount = serializers.SerializerMethodField()
@@ -55,10 +54,7 @@ class CartSerializer(serializers.ModelSerializer):
         ]
 
     def get_total_amount(self, obj):
-        return sum(
-            item.quantity * item.price_at_added
-            for item in obj.items.all()
-        )
+        return sum(item.quantity * item.price_at_added for item in obj.items.all())
 
     def get_total_items(self, obj):
         return sum(item.quantity for item in obj.items.all())
