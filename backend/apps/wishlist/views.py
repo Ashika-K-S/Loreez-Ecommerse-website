@@ -13,14 +13,13 @@ class WishlistView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        wishlist = Wishlist.objects.filter(user=request.user)
-        # Filter out orphaned product references
+        wishlist_qs = Wishlist.objects.filter(user=request.user)
         valid_items = []
-        for item in wishlist:
-            if item.product:
-                valid_items.append(item)
-            else:
-                
+        for item in wishlist_qs:
+            try:
+                if item.product:
+                    valid_items.append(item)
+            except Product.DoesNotExist:
                 item.delete()
         
         serializer = WishlistSerializer(valid_items, many=True)
@@ -31,23 +30,27 @@ class WishlistView(APIView):
         if not product_id:
             return Response({"detail": "product_id is required"}, status=status.HTTP_400_BAD_REQUEST)
         
-        product = get_object_or_404(Product, id=product_id)
+        try:
+            product = get_object_or_404(Product, id=product_id)
+        except Exception as e:
+            return Response({"detail": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        wishlist_item, created = Wishlist.objects.get_or_create(
-            user=request.user,
-            product=product
-        )
-
-        if not created:
-            return Response(
-                {"detail": "Product already in wishlist"},
-                status=status.HTTP_400_BAD_REQUEST
+        try:
+            wishlist_item, created = Wishlist.objects.get_or_create(
+                user=request.user,
+                product=product
             )
-
-        return Response(
-            {"detail": "Added to wishlist"},
-            status=status.HTTP_201_CREATED
-        )
+            if not created:
+                return Response(
+                    {"detail": "Product already in wishlist"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            return Response(
+                {"detail": "Added to wishlist"},
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            return Response({"detail": f"Wishlist error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class WishlistDeleteView(APIView):
