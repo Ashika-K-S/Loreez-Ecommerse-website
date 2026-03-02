@@ -55,7 +55,7 @@ const Wishlist = () => {
               {wishlist.map((item) => (
                 <div key={item.id} className="group flex flex-col cursor-pointer">
                   <div className="relative overflow-hidden bg-white mb-4">
-                    {/* Image */}
+                    
                     <img
                       src={item.product?.image}
                       alt={item.product?.name}
@@ -97,7 +97,7 @@ const Wishlist = () => {
                     </div>
                   </div>
 
-                  {/* Product Info */}
+                 
                   <div className="text-center px-2">
                     <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">
                       {item.product?.category_name}

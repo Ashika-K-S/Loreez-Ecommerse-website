@@ -34,6 +34,25 @@ export const StoreProvider = ({ children }) => {
   }, [user]);
 
   // -------------------------
+  // FETCH WISHLIST
+  // -------------------------
+  useEffect(() => {
+    if (!user) {
+      setWishlist([]);
+      return;
+    }
+
+    api
+      .get("/wishlist/")
+      .then((res) => {
+        setWishlist(res.data || []);
+      })
+      .catch((err) => {
+        console.error("Wishlist fetch error:", err);
+      });
+  }, [user]);
+
+  // -------------------------
   // ADD TO CART
   // -------------------------
   const addToCart = async (product) => {
@@ -51,7 +70,6 @@ export const StoreProvider = ({ children }) => {
 
       toast.success("Added to cart");
 
-      // Refresh cart
       const res = await api.get("/cart/");
       setCart(res.data?.items || []);
     } catch (err) {
@@ -94,6 +112,49 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
+  // -------------------------
+  // ADD TO WISHLIST
+  // -------------------------
+  const addToWishlist = async (productId) => {
+    if (!user) {
+      toast.info("Login first");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await api.post("/wishlist/", {
+        product: productId,   // IMPORTANT: not product_id
+      });
+
+      toast.success("Added to wishlist");
+
+      const res = await api.get("/wishlist/");
+      setWishlist(res.data || []);
+    } catch (err) {
+      console.error("Wishlist add error:", err);
+      toast.error("Unable to add to wishlist");
+    }
+  };
+
+  // -------------------------
+  // REMOVE FROM WISHLIST
+  // -------------------------
+  const removeFromWishlist = async (itemId) => {
+    try {
+      await api.delete(`/wishlist/${itemId}/`);
+
+      setWishlist((prev) =>
+        prev.filter((item) => item.id !== itemId)
+      );
+
+      toast.success("Removed from wishlist");
+    } catch (err) {
+      console.error("Wishlist remove error:", err);
+      toast.error("Unable to remove from wishlist");
+    }
+  };
+
   return (
     <StoreContext.Provider
       value={{
@@ -102,6 +163,8 @@ export const StoreProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         updateQuantity,
+        addToWishlist,
+        removeFromWishlist,
       }}
     >
       {children}
