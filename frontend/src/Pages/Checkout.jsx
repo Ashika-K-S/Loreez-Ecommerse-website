@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import api from "../utils/api";
+import api from "../api/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

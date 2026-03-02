@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../utils/api";
+import api from "../api/api";
 import { Heart } from "lucide-react";
 import { useStore } from "../Context/StoreContext";
 import Navbar from "./Navbar";
