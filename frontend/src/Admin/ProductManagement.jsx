@@ -89,43 +89,36 @@ const ProductManagement = () => {
   // UPDATE PRODUCT (UPDATED)
   // =========================
   const handleUpdate = async () => {
-    const formData = new FormData();
+  try {
+    await api.patch(`products/${editingProduct.id}/`, {
+      name: newProduct.name,
+      description: newProduct.description,
+      price: Number(newProduct.price),
+      image: newProduct.image, // keep URL string
+      category: Number(newProduct.category),
+      stock: Number(newProduct.stock),
+      discount: Number(newProduct.discount),
+    });
 
-    formData.append("name", newProduct.name);
-    formData.append("description", newProduct.description);
-    formData.append("price", Number(newProduct.price));
-    formData.append("category", newProduct.category);
-    formData.append("stock", Number(newProduct.stock));
-    formData.append("discount", Number(newProduct.discount));
+    setEditingProduct(null);
+    setNewProduct({
+      name: "",
+      description: "",
+      price: "",
+      image: "",
+      category: "",
+      stock: 0,
+      discount: 0,
+    });
 
-    if (newProduct.image instanceof File) {
-      formData.append("image", newProduct.image);
-    }
-
-    try {
-      await api.patch(`products/${editingProduct.id}/`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      setEditingProduct(null);
-      setNewProduct({
-        name: "",
-        description: "",
-        price: "",
-        image: "",
-        category: "",
-        stock: 0,
-        discount: 0,
-      });
-
-      fetchData();
-      showToast("Product updated successfully!");
-      setIsModalOpen(false);
-    } catch (err) {
-  console.error("FULL BACKEND ERROR:", err.response?.data);
-  showToast(JSON.stringify(err.response?.data));
-}
-  };
+    fetchData();
+    showToast("Product updated successfully!");
+    setIsModalOpen(false);
+  } catch (err) {
+    console.error("FULL ERROR:", err.response?.data);
+    showToast(JSON.stringify(err.response?.data));
+  }
+};
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
