@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../utils/api";
 import { useAuth } from "../Context/AuthContext";
 import { toast } from "react-toastify";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://loreez.duckdns.org/api";
 
 function Login() {
   const [data, setData] = useState({ email: "", password: "" });
@@ -28,7 +25,7 @@ function Login() {
     }
 
     try {
-      const tokenResponse = await axios.post(`${API_BASE_URL}/token/`, {
+      const tokenResponse = await api.post("token/", {
         email,
         password,
       });
@@ -69,11 +66,10 @@ function Login() {
           <h2 className="text-2xl font-bold mb-4">
             You are already logged in
           </h2>
-          <p className="mb-4">Hello, {user.name}!</p>
+          <p className="mb-4">Hello, {user.username || user.name}!</p>
           <button
             onClick={() => {
               logout();
-              delete axios.defaults.headers.common["Authorization"];
               navigate("/login");
             }}
             className="bg-red-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-600 transition-colors"
@@ -124,6 +120,16 @@ function Login() {
             Login
           </button>
         </form>
+
+        <p className="mt-8 text-center text-stone-500 text-xs tracking-widest uppercase">
+          Don&apos;t have an account?{" "}
+          <Link
+            to="/register"
+            className="text-gray-900 border-b border-gray-900 pb-0.5 hover:text-stone-500 hover:border-stone-500 transition-colors"
+          >
+            Create one
+          </Link>
+        </p>
       </div>
     </div>
   );

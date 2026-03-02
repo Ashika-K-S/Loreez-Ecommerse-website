@@ -1,7 +1,13 @@
 import axios from "axios";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://loreez.duckdns.org/api";
+let baseUrl = import.meta.env.VITE_API_BASE_URL || "https://loreez.duckdns.org/api";
+if (!baseUrl.includes("/api")) {
+  baseUrl = baseUrl.replace(/\/$/, "") + "/api";
+}
+if (!baseUrl.endsWith("/")) {
+  baseUrl += "/";
+}
+const API_BASE_URL = baseUrl;
 
 const api = axios.create({
   baseURL: API_BASE_URL,

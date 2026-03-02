@@ -99,12 +99,20 @@ export default function Navbar() {
               </div>
             </div>
           ) : (
-            <Link
-              to="/login"
-              className="text-[10px] uppercase tracking-[0.3em] font-semibold border-b border-transparent hover:border-gray-900 transition-all"
-            >
-              Sign In
-            </Link>
+            <div className="flex items-center space-x-6">
+              <Link
+                to="/login"
+                className="text-[10px] uppercase tracking-[0.3em] font-semibold border-b border-transparent hover:border-gray-900 transition-all text-gray-900"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                className="text-[10px] uppercase tracking-[0.3em] font-semibold bg-gray-950 text-white px-5 py-2.5 rounded-full hover:bg-stone-800 transition-all shadow-md"
+              >
+                Register
+              </Link>
+            </div>
           )}
         </div>
       </div>

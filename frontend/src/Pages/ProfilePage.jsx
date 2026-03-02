@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
+  const navigate = useNavigate();
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.username || user?.name || "",
@@ -15,24 +16,37 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.username || user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
-      });
+    if (!user) {
+      navigate("/login");
+      return;
     }
-  }, [user]);
+
+    const fetchMe = async () => {
+      try {
+        const res = await api.get("users/me/");
+        setFormData({
+          name: res.data.username || res.data.name || "",
+          email: res.data.email || "",
+          phone: res.data.phone || "",
+        });
+      } catch (err) {
+        console.error("Profile fetch error:", err);
+      }
+    };
+    fetchMe();
+  }, [user, navigate]);
 
   const handleLogout = () => {
     logout();
     toast.info("Logged out successfully!", { position: "top-right" });
+    navigate("/");
   };
 
   const handleSave = (e) => {
     e.preventDefault();
+    // Since backend lacks update_me, we update local state and notify.
     updateUser(formData);
-    toast.success("Profile updated!", { position: "top-right" });
+    toast.success("Profile updated locally (Backend update pending)!", { position: "top-right" });
     setEditMode(false);
   };
 
