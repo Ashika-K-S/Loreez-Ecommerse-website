@@ -4,11 +4,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 const Sidebar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("user"); 
-    navigate("/login"); 
-  };
-
   const linkClass = ({ isActive }) =>
         `block py-2 px-4 rounded hover:bg-purple-100 transition ${
       isActive ? "bg-purple-200 text-purple-800 font-semibold" : "text-gray-700"
@@ -39,14 +34,20 @@ const Sidebar = () => {
               Orders
             </NavLink>
           </li>
-          
+          <li>
+            <NavLink to="/" className={linkClass}>
+              View Store
+            </NavLink>
+          </li>
         </ul>
       </div>
 
-    
       <div>
         <button
-          onClick={handleLogout}
+          onClick={() => {
+            localStorage.clear();
+            navigate("/login");
+          }}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-xl transition"
         >
           Logout

@@ -124,7 +124,7 @@ export const StoreProvider = ({ children }) => {
 
     try {
       await api.post("wishlist/", {
-        product: productId,
+        product_id: productId,
       });
 
       toast.success("Added to wishlist");
@@ -133,7 +133,7 @@ export const StoreProvider = ({ children }) => {
       setWishlist(res.data || []);
     } catch (err) {
       console.error("Wishlist add error:", err);
-      toast.error("Unable to add to wishlist");
+      toast.error(err.response?.data?.detail || "Unable to add to wishlist");
     }
   };
 
@@ -155,6 +155,15 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
+  const toggleWishlist = async (product) => {
+    const existing = wishlist.find((item) => item.product?.id === product.id);
+    if (existing) {
+      await removeFromWishlist(existing.id);
+    } else {
+      await addToWishlist(product.id);
+    }
+  };
+
   return (
     <StoreContext.Provider
       value={{
@@ -165,6 +174,7 @@ export const StoreProvider = ({ children }) => {
         updateQuantity,
         addToWishlist,
         removeFromWishlist,
+        toggleWishlist,
       }}
     >
       {children}

@@ -9,10 +9,20 @@ export default function ProfilePage() {
   const { user, logout, updateUser } = useAuth();
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || "",
+    name: user?.username || user?.name || "",
     email: user?.email || "",
     phone: user?.phone || "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.username || user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+      });
+    }
+  }, [user]);
 
   const handleLogout = () => {
     logout();

@@ -99,7 +99,7 @@ const UserManagement = () => {
         <tbody>
           {nonAdminUsers.map(u => (
             <tr key={u.id} className="hover:bg-purple-50 transition">
-              <td className="py-2 px-4 border-b">{u.username}</td>
+              <td className="py-2 px-4 border-b">{u.username || u.name}</td>
               <td className="py-2 px-4 border-b">{u.email}</td>
               <td className="py-2 px-4 border-b">{u.role}</td>
               <td className="py-2 px-4 border-b capitalize">{u.status}</td>

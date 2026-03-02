@@ -58,11 +58,11 @@ const ProductsPage = () => {
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory =
-      category === "All" || product.category === category;
+      category === "All" || product.category_name === category;
 
     const matchesSearch =
       product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category?.toLowerCase().includes(searchTerm.toLowerCase());
+      product.category_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesCategory && matchesSearch;
   });
@@ -135,7 +135,7 @@ const ProductsPage = () => {
                 <button
                   onClick={() => toggleWishlist(product)}
                   className={`absolute top-2 right-2 p-2 rounded-full ${
-                    wishlist.find((item) => item.id === product.id)
+                    wishlist.find((item) => item.product?.id === product.id)
                       ? "bg-red-100 text-red-500"
                       : "bg-gray-100 text-gray-400"
                   }`}
@@ -143,7 +143,7 @@ const ProductsPage = () => {
                   <Heart
                     size={20}
                     fill={
-                      wishlist.find((item) => item.id === product.id)
+                      wishlist.find((item) => item.product?.id === product.id)
                         ? "red"
                         : "none"
                     }

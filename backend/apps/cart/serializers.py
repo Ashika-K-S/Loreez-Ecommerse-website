@@ -11,12 +11,7 @@ class CartItemProductSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "image"]
 
     def get_image(self, obj):
-        try:
-            if obj.image:
-                return obj.image.url
-        except:
-            return None
-        return None
+        return obj.image
 
 class CartItemSerializer(serializers.ModelSerializer):
     product = CartItemProductSerializer(read_only=True)

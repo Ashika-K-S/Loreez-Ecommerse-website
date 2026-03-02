@@ -35,26 +35,24 @@ function Login() {
 
       const accessToken = tokenResponse.data?.access;
       const refreshToken = tokenResponse.data?.refresh;
+      const userData = tokenResponse.data?.user;
 
       if (!accessToken || !refreshToken) {
         throw new Error("Token response missing access or refresh token");
       }
 
-      // Attach token globally for future requests
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${accessToken}`;
-
       login({
-        email,
-        name: email.split("@")[0],
-        role: "user",
+        ...userData,
         access: accessToken,
         refresh: refreshToken,
       });
 
       toast.success("Login successful");
-      navigate("/products");
+      if (userData.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/products");
+      }
     } catch (error) {
       console.error("Login error:", error?.response?.data || error.message);
       toast.error(

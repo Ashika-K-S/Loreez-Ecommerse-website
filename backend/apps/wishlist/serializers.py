@@ -11,8 +11,6 @@ class WishlistProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'image', 'price']
 
     def get_image(self, obj):
-        if obj.image and not obj.image.startswith('http'):
-            return f"http://127.0.0.1:8000/static/{obj.image}"
         return obj.image
 
 
