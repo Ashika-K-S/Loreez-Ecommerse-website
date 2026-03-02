@@ -23,7 +23,7 @@ export const StoreProvider = ({ children }) => {
     }
 
     api
-      .get("/cart/")
+      .get("cart/")
       .then((res) => {
         const items = res.data?.items || [];
         setCart(items);
@@ -43,7 +43,7 @@ export const StoreProvider = ({ children }) => {
     }
 
     api
-      .get("/wishlist/")
+      .get("wishlist/")
       .then((res) => {
         setWishlist(res.data || []);
       })
@@ -63,14 +63,14 @@ export const StoreProvider = ({ children }) => {
     }
 
     try {
-      await api.post("/cart/add/", {
+      await api.post("cart/add/", {
         product_id: product.id,
         quantity: 1,
       });
 
       toast.success("Added to cart");
 
-      const res = await api.get("/cart/");
+      const res = await api.get("cart/");
       setCart(res.data?.items || []);
     } catch (err) {
       console.error("Add to cart error:", err);
@@ -83,7 +83,7 @@ export const StoreProvider = ({ children }) => {
   // -------------------------
   const removeFromCart = async (itemId) => {
     try {
-      await api.delete(`/cart/item/${itemId}/`);
+      await api.delete(`cart/item/${itemId}/`);
       setCart((prev) => prev.filter((item) => item.id !== itemId));
       toast.success("Removed from cart");
     } catch (err) {
@@ -99,7 +99,7 @@ export const StoreProvider = ({ children }) => {
     if (quantity < 1) return;
 
     try {
-      await api.put(`/cart/item/${itemId}/`, { quantity });
+      await api.put(`cart/item/${itemId}/`, { quantity });
 
       setCart((prev) =>
         prev.map((item) =>
@@ -123,13 +123,13 @@ export const StoreProvider = ({ children }) => {
     }
 
     try {
-      await api.post("/wishlist/", {
-        product: productId,   // IMPORTANT: not product_id
+      await api.post("wishlist/", {
+        product: productId,
       });
 
       toast.success("Added to wishlist");
 
-      const res = await api.get("/wishlist/");
+      const res = await api.get("wishlist/");
       setWishlist(res.data || []);
     } catch (err) {
       console.error("Wishlist add error:", err);
@@ -142,7 +142,7 @@ export const StoreProvider = ({ children }) => {
   // -------------------------
   const removeFromWishlist = async (itemId) => {
     try {
-      await api.delete(`/wishlist/${itemId}/`);
+      await api.delete(`wishlist/${itemId}/`);
 
       setWishlist((prev) =>
         prev.filter((item) => item.id !== itemId)

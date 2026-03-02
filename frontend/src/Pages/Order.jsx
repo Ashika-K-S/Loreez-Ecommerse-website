@@ -11,7 +11,7 @@ const OrderPage = () => {
   const fetchUserOrders = async () => {
     if (!user) return;
     try {
-      const res = await api.get("/orders/");
+      const res = await api.get("orders/");
       setOrders(res.data);
     } catch (err) {
       console.error("Error fetching orders:", err);
@@ -28,7 +28,7 @@ const OrderPage = () => {
 
     try {
       // Use the new checkout endpoint which handles cart to order conversion
-      const res = await api.post("/orders/checkout/", {
+      const res = await api.post("orders/checkout/", {
           shipping_address: "Default Address", // In a real app, this would come from a form
           payment_method: "Cash on Delivery"
       });

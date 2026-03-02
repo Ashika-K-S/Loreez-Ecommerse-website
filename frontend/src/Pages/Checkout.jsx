@@ -44,7 +44,7 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      await api.post("/orders/checkout/", {
+      await api.post("orders/checkout/", {
         shipping_address: formData.address,
         payment_method: formData.paymentMethod,
         phone: formData.phone,

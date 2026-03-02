@@ -32,7 +32,7 @@ const ProductsPage = () => {
       }
 
       try {
-        const res = await api.get("/products/?page=1");
+        const res = await api.get("products/?page=1");
 
         const data = Array.isArray(res.data)
           ? res.data

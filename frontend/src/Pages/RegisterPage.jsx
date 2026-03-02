@@ -30,7 +30,7 @@ function Register() {
     }
 
     try {
-      await api.post("/users/register/", {
+      await api.post("users/register/", {
         name,
         email,
         password,
