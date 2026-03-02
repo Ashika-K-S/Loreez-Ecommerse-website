@@ -41,7 +41,7 @@ const ProductManagement = () => {
   };
 
   // =========================
-  // ADD PRODUCT (UPDATED)
+  // ADD PRODUCT
   // =========================
   const handleAdd = async () => {
     if (!newProduct.name || !newProduct.price || !newProduct.category) {
@@ -63,7 +63,7 @@ const ProductManagement = () => {
 
     try {
       await api.post("products/", formData, {
-        
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       setNewProduct({
@@ -80,45 +80,52 @@ const ProductManagement = () => {
       showToast("Product added successfully!");
       setIsModalOpen(false);
     } catch (err) {
-      console.error(err);
+      console.error(err.response?.data);
       showToast("Failed to add product");
     }
   };
 
   // =========================
-  // UPDATE PRODUCT (UPDATED)
+  // UPDATE PRODUCT (FIXED)
   // =========================
   const handleUpdate = async () => {
-  try {
-    await api.patch(`products/${editingProduct.id}/`, {
-      name: newProduct.name,
-      description: newProduct.description,
-      price: Number(newProduct.price),
-      image: newProduct.image, // keep URL string
-      category: Number(newProduct.category),
-      stock: Number(newProduct.stock),
-      discount: Number(newProduct.discount),
-    });
+    const formData = new FormData();
+    formData.append("name", newProduct.name);
+    formData.append("description", newProduct.description);
+    formData.append("price", Number(newProduct.price));
+    formData.append("category", Number(newProduct.category));
+    formData.append("stock", Number(newProduct.stock));
+    formData.append("discount", Number(newProduct.discount));
 
-    setEditingProduct(null);
-    setNewProduct({
-      name: "",
-      description: "",
-      price: "",
-      image: "",
-      category: "",
-      stock: 0,
-      discount: 0,
-    });
+    // Only append image if a new file is selected
+    if (newProduct.image instanceof File) {
+      formData.append("image", newProduct.image);
+    }
 
-    fetchData();
-    showToast("Product updated successfully!");
-    setIsModalOpen(false);
-  } catch (err) {
-    console.error("FULL ERROR:", err.response?.data);
-    showToast(JSON.stringify(err.response?.data));
-  }
-};
+    try {
+      await api.patch(`products/${editingProduct.id}/`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setEditingProduct(null);
+      setNewProduct({
+        name: "",
+        description: "",
+        price: "",
+        image: "",
+        category: "",
+        stock: 0,
+        discount: 0,
+      });
+
+      fetchData();
+      showToast("Product updated successfully!");
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("FULL ERROR:", err.response?.data);
+      showToast("Failed to update product");
+    }
+  };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
@@ -141,7 +148,7 @@ const ProductManagement = () => {
       name: product.name,
       description: product.description,
       price: product.price,
-      image: product.image || "",
+      image: "", // Do NOT preload URL as file
       category: product.category,
       stock: product.stock,
       discount: product.discount,
@@ -199,9 +206,9 @@ const ProductManagement = () => {
             </h2>
 
             <div className="flex flex-col gap-3">
-              {/* UPDATED IMAGE INPUT */}
               <input
                 type="file"
+                accept="image/*"
                 onChange={(e) =>
                   setNewProduct({
                     ...newProduct,
@@ -297,4 +304,5 @@ const ProductManagement = () => {
     </div>
   );
 };
+
 export default ProductManagement;
