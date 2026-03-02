@@ -122,9 +122,9 @@ const ProductManagement = () => {
       showToast("Product updated successfully!");
       setIsModalOpen(false);
     } catch (err) {
-      console.error(err);
-      showToast("Failed to update product");
-    }
+  console.error("FULL BACKEND ERROR:", err.response?.data);
+  showToast(JSON.stringify(err.response?.data));
+}
   };
 
   const handleDelete = (id) => {
