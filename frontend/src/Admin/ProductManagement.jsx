@@ -11,7 +11,7 @@ const ProductManagement = () => {
     image: "",
     category: "",
     stock: 0,
-    discount: 0
+    discount: 0,
   });
   const [editingProduct, setEditingProduct] = useState(null);
   const [toast, setToast] = useState({ message: "", visible: false });
@@ -21,7 +21,8 @@ const ProductManagement = () => {
     try {
       const prodRes = await api.get("products/?no_pagination=true");
       const productsData =
-        prodRes.data.results || (Array.isArray(prodRes.data) ? prodRes.data : []);
+        prodRes.data.results ||
+        (Array.isArray(prodRes.data) ? prodRes.data : []);
       setProducts(productsData);
 
       const catRes = await api.get("categories/");
@@ -53,9 +54,9 @@ const ProductManagement = () => {
     formData.append("name", newProduct.name);
     formData.append("description", newProduct.description);
     formData.append("price", Number(newProduct.price));
-    formData.append("category", newProduct.category);
     formData.append("stock", Number(newProduct.stock));
     formData.append("discount", Number(newProduct.discount));
+    formData.append("category", Number(newProduct.category));
 
     if (newProduct.image instanceof File) {
       formData.append("image", newProduct.image);
@@ -86,18 +87,17 @@ const ProductManagement = () => {
   };
 
   // =========================
-  // UPDATE PRODUCT (FIXED)
+  // UPDATE PRODUCT
   // =========================
   const handleUpdate = async () => {
     const formData = new FormData();
     formData.append("name", newProduct.name);
     formData.append("description", newProduct.description);
     formData.append("price", Number(newProduct.price));
-    formData.append("category", Number(newProduct.category));
     formData.append("stock", Number(newProduct.stock));
     formData.append("discount", Number(newProduct.discount));
+    formData.append("category", Number(newProduct.category));
 
-    // Only append image if a new file is selected
     if (newProduct.image instanceof File) {
       formData.append("image", newProduct.image);
     }
@@ -122,23 +122,21 @@ const ProductManagement = () => {
       showToast("Product updated successfully!");
       setIsModalOpen(false);
     } catch (err) {
-      console.error("FULL ERROR:", err.response?.data);
+      console.error(err.response?.data);
       showToast("Failed to update product");
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
-      api
-        .delete(`products/${id}/`)
-        .then(() => {
-          fetchData();
-          showToast("Product deleted successfully!");
-        })
-        .catch((err) => {
-          console.error(err);
-          showToast("Failed to delete product");
-        });
+      try {
+        await api.delete(`products/${id}/`);
+        fetchData();
+        showToast("Product deleted successfully!");
+      } catch (err) {
+        console.error(err);
+        showToast("Failed to delete product");
+      }
     }
   };
 
@@ -148,7 +146,7 @@ const ProductManagement = () => {
       name: product.name,
       description: product.description,
       price: product.price,
-      image: "", // Do NOT preload URL as file
+      image: "", // do NOT preload URL into file input
       category: product.category,
       stock: product.stock,
       discount: product.discount,
