@@ -51,33 +51,42 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email', 'role', 'status')
 class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """Token serializer that authenticates with email + password."""
     username_field = "email"
 
     def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
-        
+        email = attrs.get("email")
+        password = attrs.get("password")
+
         try:
             user_obj = User.objects.get(email=email)
             username = user_obj.username
         except User.DoesNotExist:
-            raise serializers.ValidationError('No active account found with the given credentials')
+            raise serializers.ValidationError(
+                "No active account found with the given credentials"
+            )
 
-        user = authenticate(request=self.context.get('request'), username=username, password=password)
-        if not user:
-            raise serializers.ValidationError('No active account found with the given credentials')
-            
-        if not user.is_active:
-            raise serializers.ValidationError('No active account found with the given credentials')
+        user = authenticate(
+            request=self.context.get("request"),
+            username=username,
+            password=password
+        )
+
+        if not user or not user.is_active:
+            raise serializers.ValidationError(
+                "No active account found with the given credentials"
+            )
 
         refresh = self.get_token(user)
 
-        data = {}
-        data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
-        data['user_id'] = user.id
-        data['email'] = user.email
-
-        return data
-
+        return {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "role": user.role,
+                "is_staff": user.is_staff,
+                "is_superuser": user.is_superuser,
+            }
+        }
