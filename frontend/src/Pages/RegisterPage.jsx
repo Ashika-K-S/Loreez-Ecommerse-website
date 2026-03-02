@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../utils/api";
 
@@ -50,72 +49,85 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-md p-12 bg-white shadow-2xl rounded-3xl border border-gray-200">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-serif font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B]">
-            LOREEZ
+    <div className="min-h-screen flex items-center justify-center bg-stone-50 font-sans">
+      <div className="w-full max-w-md p-10 md:p-14 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[40px] border border-stone-100 flex flex-col items-center">
+        <div className="text-center mb-10 flex flex-col items-center">
+          <h4 className="uppercase tracking-[0.4em] text-[10px] text-stone-400 mb-3">
+            Join The Collection
+          </h4>
+          <h1 className="text-4xl font-serif tracking-[0.2em] text-gray-900 uppercase">
+            Register
           </h1>
-
-          <div className="mx-auto my-2 w-16 h-1 bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.6)]"></div>
-
-          <p className="text-sm text-gray-500 mt-2">jewellery</p>
+          <div className="w-12 h-[1px] bg-stone-200 mt-6"></div>
         </div>
 
-        <form onSubmit={formSubmit} className="w-full space-y-6">
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Full Name"
-            value={data.name}
-            onChange={stateChange}
-            autoComplete="name"
-            required
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
+        <form onSubmit={formSubmit} className="w-full space-y-7">
+          <div className="space-y-5">
+            <div className="relative">
+              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 ml-1">
+                Full Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Jane Doe"
+                required
+                value={data.name}
+                onChange={stateChange}
+                className="w-full bg-stone-50/50 border-b border-stone-200 py-3 px-4 text-sm focus:outline-none focus:border-gray-950 transition-colors placeholder-stone-300"
+              />
+            </div>
 
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Email"
-            value={data.email}
-            onChange={stateChange}
-            autoComplete="email"
-            required
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
+            <div className="relative">
+              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 ml-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="email@example.com"
+                required
+                value={data.email}
+                onChange={stateChange}
+                className="w-full bg-stone-50/50 border-b border-stone-200 py-3 px-4 text-sm focus:outline-none focus:border-gray-950 transition-colors placeholder-stone-300"
+              />
+            </div>
 
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Password"
-            value={data.password}
-            onChange={stateChange}
-            autoComplete="new-password"
-            required
-            className="w-full p-4 rounded-xl border border-gray-300 bg-white text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-md transition duration-300"
-          />
+            <div className="relative">
+              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-1.5 ml-1">
+                Create Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                required
+                value={data.password}
+                onChange={stateChange}
+                className="w-full bg-stone-50/50 border-b border-stone-200 py-3 px-4 text-sm focus:outline-none focus:border-gray-950 transition-colors placeholder-stone-300"
+              />
+            </div>
+          </div>
 
           <button
             type="submit"
-            className="relative w-full bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] text-white font-semibold py-4 rounded-xl shadow-lg text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            className="w-full bg-gray-950 text-white py-4 text-[10px] font-medium uppercase tracking-[0.3em] hover:bg-black transition-all duration-500 shadow-xl mt-4"
           >
-            Register
+            Create Account
           </button>
         </form>
 
-        <p className="text-gray-600 text-center mt-6">
-          Already have an account?{" "}
-          <span
-            onClick={() => navigate("/login")}
-            className="text-black font-semibold cursor-pointer hover:underline"
+        <div className="mt-10 w-full pt-8 border-t border-stone-100 flex flex-col items-center">
+          <p className="text-stone-400 text-[10px] tracking-widest uppercase mb-3">
+            Already have an account?
+          </p>
+          <Link
+            to="/login"
+            className="text-gray-900 border-b border-gray-900 pb-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] hover:text-stone-500 transition-colors"
           >
-            Login
-          </span>
-        </p>
+            Sign In Here
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -82,54 +82,70 @@ function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-md p-12 bg-white shadow-2xl rounded-3xl border border-gray-200">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-serif font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B]">
-            LOREEZ
+    <div className="min-h-screen flex items-center justify-center bg-stone-50 font-sans">
+      <div className="w-full max-w-md p-10 md:p-14 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-[40px] border border-stone-100 flex flex-col items-center">
+        <div className="text-center mb-12 flex flex-col items-center">
+          <h4 className="uppercase tracking-[0.4em] text-[10px] text-stone-400 mb-3">
+            Welcome Back
+          </h4>
+          <h1 className="text-4xl font-serif tracking-[0.2em] text-gray-900 uppercase">
+            Loreez
           </h1>
-          <div className="mx-auto my-2 w-16 h-1 bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] rounded-full shadow-[0_0_10px_rgba(212,175,55,0.6)]"></div>
-          <p className="text-sm text-gray-500 mt-2">jewellery</p>
+          <div className="w-12 h-[1px] bg-stone-200 mt-6"></div>
         </div>
 
-        <form onSubmit={formsubmit} className="w-full space-y-6">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            value={data.email}
-            onChange={stateChange}
-            className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
+        <form onSubmit={formsubmit} className="w-full space-y-8">
+          <div className="space-y-6">
+            <div className="relative">
+              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-2 ml-1">
+                Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="email@example.com"
+                required
+                value={data.email}
+                onChange={stateChange}
+                className="w-full bg-stone-50/50 border-b border-stone-200 py-3.5 px-4 text-sm focus:outline-none focus:border-gray-950 transition-colors placeholder-stone-300"
+              />
+            </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-            value={data.password}
-            onChange={stateChange}
-            className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
+            <div className="relative">
+              <label className="block text-[10px] uppercase tracking-widest text-stone-400 mb-2 ml-1">
+                Security Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                required
+                value={data.password}
+                onChange={stateChange}
+                className="w-full bg-stone-50/50 border-b border-stone-200 py-3.5 px-4 text-sm focus:outline-none focus:border-gray-950 transition-colors placeholder-stone-300"
+              />
+            </div>
+          </div>
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#D4AF37] via-[#C4972C] to-[#B8860B] text-white py-3 rounded-xl font-semibold hover:opacity-90 transition"
+            className="w-full bg-gray-950 text-white py-4 text-[10px] font-medium uppercase tracking-[0.3em] hover:bg-black transition-all duration-500 shadow-xl"
           >
-            Login
+            Sign In
           </button>
         </form>
 
-        <p className="mt-8 text-center text-stone-500 text-xs tracking-widest uppercase">
-          Don&apos;t have an account?{" "}
+        <div className="mt-12 w-full pt-8 border-t border-stone-100 flex flex-col items-center">
+          <p className="text-stone-400 text-[10px] tracking-widest uppercase mb-4">
+            New to the collection?
+          </p>
           <Link
             to="/register"
-            className="text-gray-900 border-b border-gray-900 pb-0.5 hover:text-stone-500 hover:border-stone-500 transition-colors"
+            className="text-gray-900 border-b border-gray-900 pb-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] hover:text-stone-500 hover:border-stone-500 transition-colors"
           >
-            Create one
+            Create An Account
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
