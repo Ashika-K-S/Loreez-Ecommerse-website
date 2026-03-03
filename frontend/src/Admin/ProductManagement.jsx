@@ -222,7 +222,7 @@ const ProductManagement = () => {
                       className="w-12 h-12 object-cover rounded shadow-sm bg-stone-50"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "https://placehold.co/150?text=S3+Error";
+                        e.target.src = "https://placehold.co/150?text=Missing";
                       }}
                     />
                   </td>

@@ -157,7 +157,7 @@ const ProductsPage = () => {
                         className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = "https://placehold.co/600x800?text=Image+Unavailable";
+                          e.target.src = "https://placehold.co/600x800?text=Loreez";
                         }}
                       />
                     </Link>
