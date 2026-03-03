@@ -189,6 +189,83 @@ const ProductManagement = () => {
         </button>
       </div>
 
+      <div className="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-gray-50 text-gray-600 text-xs uppercase tracking-widest border-b border-gray-100">
+              <th className="px-6 py-4 font-semibold">Image</th>
+              <th className="px-6 py-4 font-semibold">Product</th>
+              <th className="px-6 py-4 font-semibold">Category</th>
+              <th className="px-6 py-4 font-semibold">Price</th>
+              <th className="px-6 py-4 font-semibold">Stock</th>
+              <th className="px-6 py-4 font-semibold text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {products.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="px-6 py-10 text-center text-gray-400 italic">
+                  No products found. Start by adding your first masterpiece.
+                </td>
+              </tr>
+            ) : (
+              products.map((product) => (
+                <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-12 h-12 object-cover rounded shadow-sm"
+                    />
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-gray-900">{product.name}</div>
+                    <div className="text-[10px] text-gray-400 truncate max-w-[200px]">
+                      {product.description}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    {product.category_name}
+                  </td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                    ₹ {Number(product.price).toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                      product.stock > 10 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {product.stock}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex justify-center gap-3">
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                        title="Edit"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        className="text-red-600 hover:text-red-800 transition-colors"
+                        title="Delete"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative">
@@ -226,71 +303,74 @@ const ProductManagement = () => {
                 className="border px-3 py-2 rounded"
               />
 
-              <input
-                type="text"
+              <textarea
                 placeholder="Description"
                 value={newProduct.description}
                 onChange={(e) =>
                   setNewProduct({ ...newProduct, description: e.target.value })
                 }
-                className="border px-3 py-2 rounded"
+                className="border px-3 py-2 rounded h-24 resize-none"
               />
 
-              <input
-                type="number"
-                placeholder="Price"
-                value={newProduct.price}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, price: e.target.value })
-                }
-                className="border px-3 py-2 rounded"
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="number"
+                  placeholder="Price"
+                  value={newProduct.price}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, price: e.target.value })
+                  }
+                  className="border px-3 py-2 rounded"
+                />
 
-              <input
-                type="number"
-                placeholder="Stock"
-                value={newProduct.stock}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, stock: e.target.value })
-                }
-                className="border px-3 py-2 rounded"
-              />
+                <input
+                  type="number"
+                  placeholder="Stock"
+                  value={newProduct.stock}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, stock: e.target.value })
+                  }
+                  className="border px-3 py-2 rounded"
+                />
+              </div>
 
-              <input
-                type="number"
-                placeholder="Discount (%)"
-                value={newProduct.discount}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, discount: e.target.value })
-                }
-                className="border px-3 py-2 rounded"
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="number"
+                  placeholder="Discount (%)"
+                  value={newProduct.discount}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, discount: e.target.value })
+                  }
+                  className="border px-3 py-2 rounded"
+                />
 
-              <select
-                value={newProduct.category}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, category: e.target.value })
-                }
-                className="border px-3 py-2 rounded"
-              >
-                <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
+                <select
+                  value={newProduct.category}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, category: e.target.value })
+                  }
+                  className="border px-3 py-2 rounded"
+                >
+                  <option value="">Select Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-              <div className="flex gap-3 mt-3 justify-center">
+              <div className="flex gap-3 mt-4">
                 <button
                   onClick={editingProduct ? handleUpdate : handleAdd}
-                  className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition"
+                  className="flex-1 bg-purple-600 text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-purple-700 transition shadow-md"
                 >
-                  {editingProduct ? "Update" : "Submit"}
+                   {editingProduct ? "Update Product" : "Create Product"}
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
+                  className="px-6 py-2.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition font-medium"
                 >
                   Cancel
                 </button>
