@@ -34,13 +34,13 @@ class ProductListView(APIView):
             )
 
         if request.query_params.get("no_pagination") == "true":
-            serializer = ProductSerializer(products, many=True)
+            serializer = ProductSerializer(products, many=True, context={'request': request})
             return Response(serializer.data)
 
         paginator = ProductPagination()
         paginated_products = paginator.paginate_queryset(products, request)
 
-        serializer = ProductSerializer(paginated_products, many=True)
+        serializer = ProductSerializer(paginated_products, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
@@ -50,7 +50,7 @@ class ProductListView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = ProductSerializer(data=request.data)
+        serializer = ProductSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
@@ -64,7 +64,7 @@ class ProductDetailView(APIView):
 
     def get(self, request, pk):
         product = self.get_object(pk)
-        return Response(ProductSerializer(product).data)
+        return Response(ProductSerializer(product, context={'request': request}).data)
 
     def put(self, request, pk):
         if not request.user.is_authenticated or request.user.role != "admin":
@@ -74,7 +74,7 @@ class ProductDetailView(APIView):
             )
 
         product = self.get_object(pk)
-        serializer = ProductSerializer(product, data=request.data, partial=True)
+        serializer = ProductSerializer(product, data=request.data, partial=True, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
 

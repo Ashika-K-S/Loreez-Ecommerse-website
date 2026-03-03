@@ -217,13 +217,7 @@ const ProductManagement = () => {
                 <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <img
-                      src={
-                        product.image
-                          ? product.image.startsWith("http")
-                            ? product.image
-                            : `${api.defaults.baseURL.split("/api")[0]}${product.image.startsWith('/') ? '' : '/'}${product.image}`
-                          : "https://placehold.co/150?text=No+Image"
-                      }
+                      src={product.image || "https://placehold.co/150?text=No+Image"}
                       alt={product.name}
                       className="w-12 h-12 object-cover rounded shadow-sm bg-stone-100"
                       onError={(e) => {
