@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../utils/api";
 import { useAuth } from "../Context/AuthContext"; 
 import { useStore } from "../Context/StoreContext";
-
+import Navbar from "./Navbar";
 const OrderPage = () => {
   const { cart, setCart } = useStore();
   const { user } = useAuth(); 
