@@ -10,18 +10,21 @@ const Wishlist = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const handleBuyNow = (wishlistItem) => {
+  const handleBuyNow = async (wishlistItem) => {
     if (!user) {
       toast.error("Login first");
       return;
     }
 
-    // Convert wishlist item → cart-like item
+    // Add to cart first so backend can process checkout
+    await addToCart(wishlistItem.product);
+
+    // Convert wishlist item → cart-like item (matches CartItem serializer)
     navigate("/checkout", {
       state: {
         items: [
           {
-            id: wishlistItem.id,
+            id: wishlistItem.id, // using wishlistItem id as a temporary item id
             product: wishlistItem.product,
             price_at_added: wishlistItem.product.price,
             quantity: 1,

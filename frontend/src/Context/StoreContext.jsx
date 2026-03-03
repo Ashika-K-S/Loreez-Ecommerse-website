@@ -65,7 +65,7 @@ export const StoreProvider = ({ children }) => {
     try {
       await api.post("cart/add/", {
         product_id: product.id,
-        quantity: 1,
+        quantity: product.quantity || 1,
       });
 
       toast.success("Added to cart");
@@ -124,7 +124,7 @@ export const StoreProvider = ({ children }) => {
 
     try {
       await api.post("wishlist/", {
-        product: productId,
+        product_id: productId,
       });
 
       toast.success("Added to wishlist");
@@ -164,6 +164,10 @@ export const StoreProvider = ({ children }) => {
     }
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
+
   return (
     <StoreContext.Provider
       value={{
@@ -175,6 +179,7 @@ export const StoreProvider = ({ children }) => {
         addToWishlist,
         removeFromWishlist,
         toggleWishlist,
+        clearCart,
       }}
     >
       {children}

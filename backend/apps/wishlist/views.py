@@ -22,7 +22,7 @@ class WishlistView(APIView):
             except Product.DoesNotExist:
                 item.delete()
         
-        serializer = WishlistSerializer(valid_items, many=True)
+        serializer = WishlistSerializer(valid_items, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request):

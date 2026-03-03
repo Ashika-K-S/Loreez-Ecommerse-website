@@ -155,7 +155,8 @@ const ProductDetailPage = () => {
                   Add to Cart
                 </button>
                 <button
-                  onClick={() =>
+                  onClick={async () => {
+                    await addToCart({ ...product, quantity });
                     navigate("/Checkout", {
                       state: { 
                         items: [{ 
@@ -164,8 +165,8 @@ const ProductDetailPage = () => {
                           price_at_added: product.price 
                         }] 
                       },
-                    })
-                  }
+                    });
+                  }}
                   className="flex-1 bg-gray-900 text-white py-4 text-sm font-medium uppercase tracking-widest hover:bg-black transition-colors duration-300"
                 >
                   Buy Now
