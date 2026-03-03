@@ -152,9 +152,13 @@ const ProductsPage = () => {
                   <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden mb-6 shadow-sm">
                     <Link to={`/product/${product.id}`}>
                       <img
-                        src={product.image}
+                        src={product.image || "https://placehold.co/600x800?text=Loreez"}
                         alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://placehold.co/600x800?text=Image+Unavailable";
+                        }}
                       />
                     </Link>
                     

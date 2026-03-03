@@ -35,25 +35,21 @@ class ProductSerializer(serializers.ModelSerializer):
         if not obj.image:
             return None
         
-        image_url = str(obj.image)
+        # If it's a FileField/ImageField, use its .url property
+        # django-storages will automatically return the full S3 URL
+        try:
+            url = obj.image.url
+            if url:
+                # If for some reason it's relative, make it absolute using request
+                if not url.startswith(('http://', 'https://')):
+                    request = self.context.get('request')
+                    if request:
+                        return request.build_absolute_uri(url)
+                return url
+        except Exception:
+            # Fallback if .url fails (e.g. if data in DB is just a string URL)
+            image_str = str(obj.image)
+            if image_str.startswith(('http://', 'https://')):
+                return image_str
         
-        # If it's already a full URL, return it
-        if image_url.startswith(('http://', 'https://')):
-            return image_url
-            
-        # Try to use request context to build absolute URI
-        request = self.context.get('request')
-        if request:
-            try:
-                return request.build_absolute_uri(obj.image.url)
-            except:
-                pass
-                
-        # Manual S3 domain fallback if configured
-        from django.conf import settings
-        aws_domain = getattr(settings, 'AWS_S3_CUSTOM_DOMAIN', None)
-        if aws_domain:
-            return f"https://{aws_domain}/{image_url.lstrip('/')}"
-            
-        # Last resort: simple path
-        return image_url
+        return None

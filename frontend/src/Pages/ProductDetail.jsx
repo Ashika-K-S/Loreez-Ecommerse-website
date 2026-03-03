@@ -72,9 +72,13 @@ const ProductDetailPage = () => {
               </span>
             )}
             <img
-              src={product.image || "/images/placeholder.jpg"}
+              src={product.image || "https://placehold.co/600x800?text=Loreez"}
               alt={product.name}
               className="w-full aspect-[4/5] object-cover transition-transform duration-700 hover:scale-105"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://placehold.co/600x800?text=Image+Currently+Unavailable";
+              }}
             />
             <button
               onClick={() => toggleWishlist(product)}
