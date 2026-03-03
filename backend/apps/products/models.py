@@ -24,7 +24,7 @@ class Product(models.Model):
     return_policy = models.CharField(max_length=100, blank=True)
 
     stock = models.PositiveIntegerField(default=0)
-    image = models.URLField(blank=True)
+    image = models.FileField(upload_to="products/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

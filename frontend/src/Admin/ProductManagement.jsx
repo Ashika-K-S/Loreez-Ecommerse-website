@@ -58,7 +58,9 @@ const ProductManagement = () => {
     formData.append("discount", Number(newProduct.discount));
     formData.append("category", Number(newProduct.category));
 
-    if (newProduct.image && typeof newProduct.image === 'string') {
+    if (newProduct.image instanceof File) {
+      formData.append("image", newProduct.image);
+    } else if (typeof newProduct.image === 'string' && newProduct.image !== "") {
       formData.append("image", newProduct.image);
     }
 
@@ -98,7 +100,9 @@ const ProductManagement = () => {
     formData.append("discount", Number(newProduct.discount));
     formData.append("category", Number(newProduct.category));
 
-    if (newProduct.image && typeof newProduct.image === 'string') {
+    if (newProduct.image instanceof File) {
+      formData.append("image", newProduct.image);
+    } else if (typeof newProduct.image === 'string' && newProduct.image !== "") {
       formData.append("image", newProduct.image);
     }
 
@@ -146,7 +150,7 @@ const ProductManagement = () => {
       name: product.name,
       description: product.description,
       price: product.price,
-      image: product.image || "",
+      image: product.image || "", 
       category: product.category,
       stock: product.stock,
       discount: product.discount,
@@ -217,13 +221,14 @@ const ProductManagement = () => {
                         product.image
                           ? product.image.startsWith("http")
                             ? product.image
-                            : `${api.defaults.baseURL.split("/api")[0]}/${product.image.replace(/^\//, "")}`
-                          : "https://via.placeholder.com/150?text=No+Image"
+                            : `${api.defaults.baseURL.split("/api")[0]}${product.image.startsWith('/') ? '' : '/'}${product.image}`
+                          : "https://placehold.co/150?text=No+Image"
                       }
                       alt={product.name}
                       className="w-12 h-12 object-cover rounded shadow-sm bg-stone-100"
                       onError={(e) => {
-                        e.target.src = "https://via.placeholder.com/150?text=No+Image";
+                        e.target.onerror = null;
+                        e.target.src = "https://placehold.co/150?text=Image+Error";
                       }}
                     />
                   </td>
@@ -290,14 +295,17 @@ const ProductManagement = () => {
             </h2>
 
             <div className="flex flex-col gap-3">
+              <label className="text-[10px] uppercase tracking-widest text-stone-400 ml-1">Product Image</label>
               <input
-                type="text"
-                placeholder="Image URL (S3 or External)"
-                value={typeof newProduct.image === 'string' ? newProduct.image : ""}
+                type="file"
+                accept="image/*"
                 onChange={(e) =>
-                  setNewProduct({ ...newProduct, image: e.target.value })
+                  setNewProduct({
+                    ...newProduct,
+                    image: e.target.files[0],
+                  })
                 }
-                className="border px-3 py-2 rounded"
+                className="border px-3 py-2 rounded text-xs bg-stone-50"
               />
 
               <input
