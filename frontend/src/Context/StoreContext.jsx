@@ -124,7 +124,7 @@ export const StoreProvider = ({ children }) => {
 
     try {
       await api.post("wishlist/", {
-        product_id: productId,
+        product: productId,
       });
 
       toast.success("Added to wishlist");
