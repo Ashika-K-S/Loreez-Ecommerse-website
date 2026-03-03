@@ -217,12 +217,13 @@ const ProductManagement = () => {
                 <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <img
-                      src={product.image || "https://placehold.co/150?text=No+Image"}
+                      src={product.image || "https://placehold.co/150?text=No+Data"}
                       alt={product.name}
                       className="w-12 h-12 object-cover rounded shadow-sm bg-stone-100"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "https://placehold.co/150?text=Image+Error";
+                        const errorMsg = e.target.src.length > 50 ? "Path+Error" : "Broken+Link";
+                        e.target.src = `https://placehold.co/150?text=${errorMsg}`;
                       }}
                     />
                   </td>
