@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import api from "../utils/api";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -29,11 +29,9 @@ function StripePayment({ orderId, totalPrice, onSuccess }) {
     setLoading(true);
 
     try {
-      // 1️⃣ Create PaymentIntent
       const res = await api.post(`/payments/create/${orderId}/`);
       const { clientSecret } = res.data;
 
-      // 2️⃣ Confirm payment
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
@@ -46,7 +44,6 @@ function StripePayment({ orderId, totalPrice, onSuccess }) {
         return;
       }
 
-      // 3️⃣ Verify on backend
       if (result.paymentIntent.status === "succeeded") {
         await api.post("/payments/verify/", {
           payment_intent_id: result.paymentIntent.id,
@@ -84,12 +81,10 @@ function StripePayment({ orderId, totalPrice, onSuccess }) {
 /* ================= MAIN CHECKOUT PAGE ================= */
 
 export default function CheckoutPage() {
-  const location = useLocation();
   const navigate = useNavigate();
   const { clearCart } = useStore();
 
-  const items = location.state?.items || [];
-
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [createdOrderId, setCreatedOrderId] = useState(null);
 
@@ -101,8 +96,18 @@ export default function CheckoutPage() {
     paymentMethod: "Cash on Delivery",
   });
 
+  /* ✅ FETCH CART FROM BACKEND */
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const fetchCart = async () => {
+      try {
+        const res = await api.get("cart/");
+        setItems(res.data.items || []);
+      } catch (err) {
+        console.error("Cart fetch error:", err);
+      }
+    };
+
+    fetchCart();
   }, []);
 
   const totalPrice = useMemo(() => {
@@ -126,14 +131,12 @@ export default function CheckoutPage() {
 
       const order = res.data;
 
-      // If Card selected → show Stripe UI
       if (formData.paymentMethod === "Debit/Credit Card") {
         setCreatedOrderId(order.id);
         setLoading(false);
         return;
       }
 
-      // COD flow
       toast.success("Order placed successfully!");
       clearCart();
       navigate("/");
@@ -151,7 +154,7 @@ export default function CheckoutPage() {
       <>
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
-          <p>No items in cart.</p>
+          <p>Your cart is empty.</p>
         </div>
         <Footer />
       </>
@@ -165,7 +168,7 @@ export default function CheckoutPage() {
       <div className="min-h-screen pt-32 pb-24 bg-stone-50">
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12">
 
-          {/* LEFT SIDE FORM */}
+          {/* LEFT FORM */}
           <div>
             <h2 className="text-2xl mb-6 uppercase">Checkout</h2>
 
@@ -234,7 +237,6 @@ export default function CheckoutPage() {
               </button>
             </form>
 
-            {/* STRIPE SECTION */}
             {createdOrderId &&
               formData.paymentMethod === "Debit/Credit Card" && (
                 <Elements stripe={stripePromise}>
@@ -250,7 +252,7 @@ export default function CheckoutPage() {
               )}
           </div>
 
-          {/* RIGHT SIDE SUMMARY */}
+          {/* RIGHT SUMMARY */}
           <div className="bg-white p-6 border">
             <h3 className="text-xl mb-6">Order Summary</h3>
 
