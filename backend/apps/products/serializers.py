@@ -11,6 +11,9 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     category_slug = serializers.CharField(source='category.slug', read_only=True)
+    
+    # Redefine image to allow both strings and internal file objects during creation
+    image = serializers.Field(required=False, allow_null=True)
 
     class Meta:
         model = Product
@@ -22,18 +25,13 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def _handle_upload(self, validated_data):
         image_data = validated_data.get('image')
-        # If it's a file (not a string), we upload it manually
+        # If it's a file-like object (not a string), upload to S3 manually
         if image_data and not isinstance(image_data, str):
             from django.core.files.storage import default_storage
-            # Save the file to S3
-            path = default_storage.save(f"products/{getattr(image_data, 'name', 'upload.jpg')}", image_data)
-            # Store the resulting URL in the database
+            filename = getattr(image_data, 'name', 'product_image.jpg')
+            path = default_storage.save(f"products/{filename}", image_data)
             validated_data['image'] = default_storage.url(path)
         return validated_data
-
-    def validate_image(self, value):
-        # Allow both strings (URLs) and Files (uploads)
-        return value
 
     def create(self, validated_data):
         validated_data = self._handle_upload(validated_data)
@@ -45,10 +43,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        # Ensure that whatever is stored is returned as a full URL if relative
-        image_url = data.get('image')
-        if image_url and not image_url.startswith(('http://', 'https://')):
+        
+        # Defensive check for image URL representation
+        image_val = data.get('image')
+        if not image_val:
+            return data
+            
+        image_str = str(image_val)
+        if not image_str.startswith(('http://', 'https://')):
             request = self.context.get('request')
             if request:
-                data['image'] = request.build_absolute_uri(image_url)
+                data['image'] = request.build_absolute_uri(image_str)
+        else:
+            data['image'] = image_str
+            
         return data

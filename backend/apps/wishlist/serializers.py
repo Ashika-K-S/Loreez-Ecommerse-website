@@ -13,12 +13,18 @@ class WishlistProductSerializer(serializers.ModelSerializer):
     def get_image(self, obj):
         if not obj.image:
             return None
-        if obj.image.startswith(('http://', 'https://')):
-            return obj.image
+        
+        # Safely convert to string in case it's a FieldFile or other object
+        image_str = str(obj.image)
+        if image_str.startswith(('http://', 'https://')):
+            return image_str
+            
         request = self.context.get('request')
         if request:
-            return request.build_absolute_uri(obj.image)
-        return obj.image
+            # If the value is a relative path, build an absolute URI
+            return request.build_absolute_uri(image_str)
+            
+        return image_str
 
 
 class WishlistSerializer(serializers.ModelSerializer):
