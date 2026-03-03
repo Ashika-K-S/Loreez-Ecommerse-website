@@ -58,7 +58,7 @@ const ProductManagement = () => {
     formData.append("discount", Number(newProduct.discount));
     formData.append("category", Number(newProduct.category));
 
-    if (newProduct.image instanceof File) {
+    if (newProduct.image && typeof newProduct.image === 'string') {
       formData.append("image", newProduct.image);
     }
 
@@ -98,7 +98,7 @@ const ProductManagement = () => {
     formData.append("discount", Number(newProduct.discount));
     formData.append("category", Number(newProduct.category));
 
-    if (newProduct.image instanceof File) {
+    if (newProduct.image && typeof newProduct.image === 'string') {
       formData.append("image", newProduct.image);
     }
 
@@ -146,7 +146,7 @@ const ProductManagement = () => {
       name: product.name,
       description: product.description,
       price: product.price,
-      image: "", // do NOT preload URL into file input
+      image: product.image || "",
       category: product.category,
       stock: product.stock,
       discount: product.discount,
@@ -213,9 +213,18 @@ const ProductManagement = () => {
                 <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <img
-                      src={product.image}
+                      src={
+                        product.image
+                          ? product.image.startsWith("http")
+                            ? product.image
+                            : `${api.defaults.baseURL.split("/api")[0]}/${product.image.replace(/^\//, "")}`
+                          : "https://via.placeholder.com/150?text=No+Image"
+                      }
                       alt={product.name}
-                      className="w-12 h-12 object-cover rounded shadow-sm"
+                      className="w-12 h-12 object-cover rounded shadow-sm bg-stone-100"
+                      onError={(e) => {
+                        e.target.src = "https://via.placeholder.com/150?text=No+Image";
+                      }}
                     />
                   </td>
                   <td className="px-6 py-4">
@@ -282,13 +291,11 @@ const ProductManagement = () => {
 
             <div className="flex flex-col gap-3">
               <input
-                type="file"
-                accept="image/*"
+                type="text"
+                placeholder="Image URL (S3 or External)"
+                value={typeof newProduct.image === 'string' ? newProduct.image : ""}
                 onChange={(e) =>
-                  setNewProduct({
-                    ...newProduct,
-                    image: e.target.files[0],
-                  })
+                  setNewProduct({ ...newProduct, image: e.target.value })
                 }
                 className="border px-3 py-2 rounded"
               />
